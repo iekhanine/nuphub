@@ -45,14 +45,19 @@ export default async function AdminPostsPage() {
     
     const admin = createAdminClient();
 
-    const { error } = await supabase
-      .from("posts")
-      .update({ is_featured: !currentValue })
-      .eq("id", postId);
+const { data, error } = await admin
+  .from("posts")
+  .update({ is_featured: !currentValue })
+  .eq("id", postId)
+  .select("id, title, is_featured");
 
-    if (error) {
-      throw new Error(error.message);
-    }
+if (error) {
+  throw new Error(error.message);
+}
+
+if (!data || data.length === 0) {
+  throw new Error(`Featured update matched no posts. postId=${postId}`);
+}
 
     revalidatePath("/");
     revalidatePath("/admin/posts");
