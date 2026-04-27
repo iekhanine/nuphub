@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 
 export default async function AdminPostsPage() {
   const supabase = await createClient();
@@ -41,6 +42,8 @@ export default async function AdminPostsPage() {
       .single();
 
     if (profile?.role !== "admin") redirect("/dashboard");
+    
+    const admin = createAdminClient();
 
     const { error } = await supabase
       .from("posts")
