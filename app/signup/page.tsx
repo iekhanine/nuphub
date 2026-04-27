@@ -88,14 +88,14 @@ export default function SignupPage() {
           <div className="mt-6 space-y-4">
             <input
               className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3"
-              placeholder="Public username"
+              placeholder="Permanent @name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
 
             <input
               className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3"
-              placeholder="Display name"
+              placeholder="Display Name"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
