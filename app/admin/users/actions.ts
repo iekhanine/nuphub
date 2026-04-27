@@ -9,19 +9,26 @@ async function requireAdmin() {
 
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (userError || !user) {
     throw new Error("Not logged in");
   }
 
-  const { data: profile } = await supabase
+  const admin = createAdminClient();
+
+  const { data: profile, error: profileError } = await admin
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") {
+  if (profileError || !profile) {
+    throw new Error("Admin profile not found");
+  }
+
+  if (profile.role?.toLowerCase() !== "admin") {
     throw new Error("Not authorized");
   }
 
@@ -54,7 +61,7 @@ export async function updateUserRole(userId: string, role: string) {
 export async function createUser(formData: FormData) {
   await requireAdmin();
 
-  const email = String(formData.get("email") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
   const username = String(formData.get("username") ?? "")
     .toLowerCase()
@@ -87,6 +94,7 @@ export async function createUser(formData: FormData) {
 
   const { error: profileError } = await admin.from("profiles").upsert({
     id: userId,
+    email,
     username,
     display_name: displayName,
     role,
