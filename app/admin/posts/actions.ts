@@ -9,17 +9,28 @@ async function requireAdmin() {
 
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
-  if (!user) throw new Error("Not logged in");
+  if (userError || !user) {
+    throw new Error("Not logged in");
+  }
 
-  const { data: profile } = await supabase
+  const admin = createAdminClient();
+
+  const { data: profile, error: profileError } = await admin
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") throw new Error("Not authorized");
+  if (profileError || !profile) {
+    throw new Error("Admin profile not found");
+  }
+
+  if (profile.role?.toLowerCase() !== "admin") {
+    throw new Error("Not authorized");
+  }
 }
 
 export async function deletePost(postId: string) {
@@ -29,7 +40,9 @@ export async function deletePost(postId: string) {
 
   const { error } = await admin.from("posts").delete().eq("id", postId);
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    throw new Error(error.message);
+  }
 
   revalidatePath("/admin/posts");
 }
@@ -48,7 +61,9 @@ export async function updatePostStatus(postId: string, status: string) {
     .update({ status })
     .eq("id", postId);
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    throw new Error(error.message);
+  }
 
   revalidatePath("/admin/posts");
 }

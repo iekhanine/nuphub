@@ -1,5 +1,5 @@
-git status
-git add .
-git commit -m "Fix production build errors"
+npm run build
+git add app/admin/posts/actions.ts
+git commit -m "Harden admin authorization checks"
 git push
 pause
