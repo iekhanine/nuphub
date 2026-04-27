@@ -50,7 +50,7 @@ export default async function EditFrontPagePost({
       </main>
     );
   }
-
+  const postId = post.id;
   async function updatePost(formData: FormData) {
     "use server";
 
@@ -76,7 +76,7 @@ export default async function EditFrontPagePost({
         content,
         status,
       })
-      .eq("id", post.id);
+      .eq("id", postId);
 
     if (error) {
       throw new Error(error.message);
