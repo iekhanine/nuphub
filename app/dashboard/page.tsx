@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
+
+const supabase = createClient();
 
 export default function DashboardPage() {
   const [userId, setUserId] = useState("");
@@ -11,6 +13,7 @@ export default function DashboardPage() {
   const [bio, setBio] = useState("");
   const [postCount, setPostCount] = useState(0);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadUser() {
@@ -43,6 +46,7 @@ export default function DashboardPage() {
         .eq("status", "published");
 
       setPostCount(count ?? 0);
+      setLoading(false);
     }
 
     loadUser();
@@ -83,84 +87,106 @@ export default function DashboardPage() {
   }
 
   const remaining = Math.max(15 - postCount, 0);
+  const progress = Math.min((postCount / 15) * 100, 100);
   const unlocked = postCount >= 15;
+  const name = displayName || username || email || "there";
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
-      <section className="mx-auto max-w-3xl px-6 py-12">
-        <div className="mb-8 flex items-center justify-between">
-          <a href="/" className="text-sm text-zinc-400 hover:text-white">
-            ← NUPHub
-          </a>
+    <main className="min-h-screen bg-zinc-100 text-zinc-900">
+      <header className="border-b border-zinc-300 bg-white">
+        
+      </header>
 
-          <button onClick={signOut} className="text-sm text-zinc-400 hover:text-white">
-            Sign out
-          </button>
-        </div>
+      <section className="mx-auto max-w-6xl px-6 py-10">
+        <div className="rounded-3xl border border-zinc-300 bg-white p-8 shadow-sm">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Welcome back
+          </p>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
-          <h1 className="text-3xl font-bold">Your Dashboard</h1>
-          <p className="mt-2 text-sm text-zinc-400">{email}</p>
+          <h1 className="mt-3 text-4xl font-bold">
+            {loading ? "Loading..." : name}
+          </h1>
 
-          <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-            <p className="text-sm text-zinc-400">Published Articles</p>
-            <p className="mt-2 text-4xl font-bold">{postCount}</p>
+          <p className="mt-2 text-zinc-600">
+            {loading ? "" : email}
+          </p>
 
-            <p className="mt-3 text-sm text-zinc-400">
-              {unlocked
-                ? "Front Page submission unlocked."
-                : `${remaining} more article${remaining === 1 ? "" : "s"} until Front Page unlock.`}
-            </p>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+              <p className="text-sm text-zinc-500">Published Articles</p>
+              <p className="mt-2 text-5xl font-bold">
+                {loading ? "—" : postCount}
+              </p>
+            </div>
 
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="/dashboard/new-post"
-                className="rounded-xl bg-white px-5 py-3 text-center font-semibold text-zinc-950 hover:bg-zinc-200"
-              >
-                Write New Article
-              </a>
+            <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 md:col-span-2">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm text-zinc-500">Front Page Progress</p>
+                  <p className="mt-2 font-semibold">
+                    {loading
+                      ? "Checking your progress..."
+                      : unlocked
+                        ? "Unlocked. You can submit to the Front Page."
+                        : `${remaining} more article${
+                            remaining === 1 ? "" : "s"
+                          } to unlock Front Page submission.`}
+                  </p>
+                </div>
 
-              {username && (
-                <a
-                  href={`/u/${username}`}
-                  className="rounded-xl border border-zinc-700 px-5 py-3 text-center font-semibold hover:bg-zinc-800"
-                >
-                  View Public Page
-                </a>
-              )}
+                <p className="text-sm font-bold text-zinc-500">
+                  {loading ? "—" : `${postCount}/15`}
+                </p>
+              </div>
+
+              <div className="mt-5 h-3 overflow-hidden rounded-full bg-zinc-200">
+                <div
+                  className="h-full rounded-full bg-zinc-900"
+                  style={{ width: `${loading ? 0 : progress}%` }}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="mt-8 space-y-4">
-            <input
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-white"
-              placeholder="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-
-            <input
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-white"
-              placeholder="Display name"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-            />
-
-            <textarea
-              className="min-h-32 w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-white"
-              placeholder="Bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-            />
-
-            <button
-              onClick={saveProfile}
-              className="rounded-xl bg-white px-5 py-3 font-semibold text-zinc-950 hover:bg-zinc-200"
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <a
+              href="/dashboard/new-post"
+              className="rounded-2xl bg-zinc-900 p-5 text-white hover:bg-zinc-700"
             >
-              Save Profile
-            </button>
+              <h2 className="font-bold">Write Article</h2>
+              <p className="mt-2 text-sm text-zinc-300">
+                Publish something new to your archive.
+              </p>
+            </a>
 
-            {message && <p className="text-sm text-zinc-400">{message}</p>}
+            {!loading && username ? (
+              <a
+                href={`/u/${username}`}
+                className="rounded-2xl border border-zinc-300 bg-white p-5 hover:bg-zinc-50"
+              >
+                <h2 className="font-bold">View Page</h2>
+                <p className="mt-2 text-sm text-zinc-600">
+                  See your public NewUntitledPage.
+                </p>
+              </a>
+            ) : (
+              <div className="rounded-2xl border border-zinc-300 bg-white p-5 text-zinc-400">
+                <h2 className="font-bold">View Page</h2>
+                <p className="mt-2 text-sm">
+                  {loading ? "Loading your profile..." : "Save a username first."}
+                </p>
+              </div>
+            )}
+
+            <a
+              href="/frontpage"
+              className="rounded-2xl border border-zinc-300 bg-white p-5 hover:bg-zinc-50"
+            >
+              <h2 className="font-bold">Front Page</h2>
+              <p className="mt-2 text-sm text-zinc-600">
+                See what the Hub is featuring.
+              </p>
+            </a>
           </div>
         </div>
       </section>

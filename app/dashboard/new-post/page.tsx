@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
+
+const supabase = createClient();
 
 function makeSlug(title: string) {
   return title
@@ -33,7 +35,7 @@ export default function NewPostPage() {
   }, []);
 
   async function publishPost() {
-    setMessage("Publishing...");
+    setMessage("Draft Saved. Pending Review.");
 
     const slug = makeSlug(title);
 
@@ -52,7 +54,7 @@ export default function NewPostPage() {
       title,
       slug,
       body,
-      status: "published",
+      status: "draft",
     });
 
     if (error) {

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
+
+const supabase = createClient();
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,21 +26,21 @@ export default function LoginPage() {
     setMessage("Account created. Check your email to confirm signup.");
   }
 
-  async function signIn() {
-    setMessage("Signing in...");
+async function signIn() {
+  setMessage("Signing in...");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-
-    window.location.href = "/dashboard";
+  if (error) {
+    setMessage(error.message);
+    return;
   }
+
+  window.location.href = "/dashboard";
+}
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -54,13 +56,13 @@ export default function LoginPage() {
           </p>
 
           <div className="mt-6 space-y-4">
-            <input
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-zinc-100 outline-none focus:border-white"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <input
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-zinc-100 outline-none focus:border-white"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
             <input
               className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-zinc-100 outline-none focus:border-white"
@@ -77,12 +79,12 @@ export default function LoginPage() {
               Sign In
             </button>
 
-            <button
-              onClick={signUp}
-              className="w-full rounded-xl border border-zinc-700 px-4 py-3 font-semibold hover:bg-zinc-800"
+            <a
+              href="/signup"
+              className="block w-full rounded-xl border border-zinc-700 px-4 py-3 text-center font-semibold hover:bg-zinc-800"
             >
               Create Account
-            </button>
+            </a>
 
             {message && <p className="text-sm text-zinc-400">{message}</p>}
           </div>
