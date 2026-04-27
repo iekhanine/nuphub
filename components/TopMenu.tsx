@@ -46,9 +46,9 @@ export default async function TopMenu() {
           {user && (
             <>
               <div className="relative group py-2">
-                <button href="/dashboard" className="font-semibold text-zinc-400 hover:text-white">
+                <a href="/dashboard" className="font-semibold text-zinc-400 hover:text-white">
                   Dashboard ▾
-                </button>
+                </a>
 
                 <div className="absolute right-0 top-full z-50 hidden min-w-[190px] rounded-xl border border-zinc-700 bg-zinc-900 shadow-xl group-hover:block">
                   <Link

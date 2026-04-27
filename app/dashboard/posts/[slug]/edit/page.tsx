@@ -61,6 +61,7 @@ export default async function EditPostPage({
       </main>
     );
   }
+  const postId = post.id;
 
   async function updatePost(formData: FormData) {
     "use server";
@@ -91,7 +92,7 @@ export default async function EditPostPage({
         body,
         status,
       })
-      .eq("id", post.id)
+      .eq("id", postId)
       .eq("user_id", user.id);
 
     if (error) {
