@@ -8,7 +8,9 @@ import Signup from "./pages/Signup";
 import AuthCallback from "./pages/AuthCallback";
 import SetupPage from "./pages/SetupPage";
 import Dashboard from "./pages/Dashboard";
+import LinksPage from "./pages/LinksPage";
 import OverlaySettingsPage from "./pages/OverlaySettingsPage";
+import BillingPage from "./pages/BillingPage";
 import AccountPage from "./pages/AccountPage";
 import ObsOverlayPage from "./pages/ObsOverlayPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
@@ -17,6 +19,8 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ObsPage from "./pages/ObsPage";
 import TwitchPage from "./pages/TwitchPage";
+import PricingPage from "./pages/PricingPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
 
 function NupHubAppRoute({ children }: { children: React.ReactNode }) {
   return (
@@ -34,6 +38,7 @@ export default function App() {
       <Route path="/features" element={<FeaturesPage />} />
       <Route path="/obs" element={<ObsPage />} />
       <Route path="/twitch" element={<TwitchPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
@@ -55,6 +60,16 @@ export default function App() {
           </NupHubAppRoute>
         }
       />
+
+      <Route
+        path="/dashboard/links"
+        element={
+          <NupHubAppRoute>
+            <LinksPage />
+          </NupHubAppRoute>
+        }
+      />
+
       <Route
         path="/dashboard/overlay"
         element={
@@ -63,11 +78,35 @@ export default function App() {
           </NupHubAppRoute>
         }
       />
+
+      <Route
+        path="/dashboard/billing"
+        element={
+          <NupHubAppRoute>
+            <BillingPage />
+          </NupHubAppRoute>
+        }
+      />
+
       <Route
         path="/dashboard/account"
         element={
           <NupHubAppRoute>
             <AccountPage />
+          </NupHubAppRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/admin"
+        element={<Navigate to="/dashboard/admin/users" replace />}
+      />
+
+      <Route
+        path="/dashboard/admin/users"
+        element={
+          <NupHubAppRoute>
+            <AdminUsersPage />
           </NupHubAppRoute>
         }
       />

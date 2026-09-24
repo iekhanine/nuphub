@@ -1,282 +1,229 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  ArrowDown,
-  ArrowUp,
+  ArrowRight,
   Copy,
-  Edit3,
-  Eye,
-  EyeOff,
+  ExternalLink,
+  Link2,
+  MonitorUp,
+  MousePointerClick,
   Plus,
-  Trash2,
+  Sparkles,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { DashboardShell } from "../components/DashboardShell";
-import { LinkEditorModal } from "../components/LinkEditorModal";
 import {
-  createLink,
-  deleteLink,
+  getMyEntitlement,
   getMyLinks,
   getMyProfile,
-  updateLink,
 } from "../lib/data";
-import type { Profile, StreamLink } from "../types";
+import { PLANS } from "../lib/plans";
+import type { Entitlement, Profile, StreamLink } from "../types";
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [links, setLinks] = useState<StreamLink[]>([]);
+  const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [editing, setEditing] = useState<StreamLink | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [copied, setCopied] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    Promise.all([getMyProfile(), getMyLinks(), getMyEntitlement()])
+      .then(([nextProfile, nextLinks, nextEntitlement]) => {
+        setProfile(nextProfile);
+        setLinks(nextLinks);
+        setEntitlement(nextEntitlement);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const active = useMemo(
     () => links.filter((item) => item.enabled).length,
     [links],
   );
 
-  const clickTotal = useMemo(
+  const clicks = useMemo(
     () => links.reduce((sum, item) => sum + item.clicks, 0),
     [links],
   );
-
-  useEffect(() => {
-    Promise.all([getMyProfile(), getMyLinks()])
-      .then(([nextProfile, nextLinks]) => {
-        setProfile(nextProfile);
-        setLinks(nextLinks);
-      })
-      .catch((err) =>
-        setError(
-          err instanceof Error ? err.message : "Could not load dashboard.",
-        ),
-      )
-      .finally(() => setLoading(false));
-  }, []);
-
-  async function saveLink(values: {
-    label: string;
-    destination_url: string;
-    sort_order: number;
-  }) {
-    if (editing) {
-      const updated = await updateLink(editing.id, values);
-
-      setLinks((items) =>
-        items.map((item) => (item.id === updated.id ? updated : item)),
-      );
-
-      return;
-    }
-
-    const created = await createLink(values);
-    setLinks((items) => [...items, created]);
-  }
-
-  async function toggle(item: StreamLink) {
-    const updated = await updateLink(item.id, {
-      enabled: !item.enabled,
-    });
-
-    setLinks((items) =>
-      items.map((current) =>
-        current.id === updated.id ? updated : current,
-      ),
-    );
-  }
-
-  async function remove(item: StreamLink) {
-    if (!window.confirm(`Delete "${item.label}"?`)) return;
-
-    await deleteLink(item.id);
-
-    setLinks((items) =>
-      items.filter((current) => current.id !== item.id),
-    );
-  }
-
-  async function move(index: number, direction: -1 | 1) {
-    const otherIndex = index + direction;
-
-    if (otherIndex < 0 || otherIndex >= links.length) return;
-
-    const current = links[index];
-    const other = links[otherIndex];
-
-    await Promise.all([
-      updateLink(current.id, { sort_order: other.sort_order }),
-      updateLink(other.id, { sort_order: current.sort_order }),
-    ]);
-
-    const next = [...links];
-    next[index] = { ...other, sort_order: current.sort_order };
-    next[otherIndex] = { ...current, sort_order: other.sort_order };
-
-    setLinks(next);
-  }
-
-  async function copy(value: string, key: string) {
-    await navigator.clipboard.writeText(value);
-    setCopied(key);
-    window.setTimeout(() => setCopied(""), 1200);
-  }
 
   if (loading) {
     return (
       <DashboardShell>
         <div className="center-state inset">
           <div className="loader" />
-          <span>Loading your links…</span>
+          <span>Loading NupHub…</span>
         </div>
       </DashboardShell>
     );
   }
 
+  const plan = entitlement?.plan ?? "free";
+  const planDefinition = PLANS[plan];
+  const limit = planDefinition.linkLimit;
+  const recent = links.slice(0, 3);
+  const obsUrl = profile
+    ? `${window.location.origin}/obs/${profile.handle}`
+    : "";
+
+  async function copyObs() {
+    await navigator.clipboard.writeText(obsUrl);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1300);
+  }
+
   return (
     <DashboardShell handle={profile?.handle}>
-      <div className="dash-heading">
+      <div className="dash-heading compact-heading">
         <div>
-          <span className="kicker">STREAM LINKS</span>
-          <h1>Put it on stream.</h1>
+          <span className="kicker">OVERVIEW</span>
+          <h1>Good to go.</h1>
+          <p className="dash-subtitle">
+            Your links, overlay and account in one place.
+          </p>
         </div>
 
-        <button
-          className="button primary"
-          onClick={() => {
-            setEditing(null);
-            setModalOpen(true);
-          }}
-        >
-          <Plus size={17} />
+        <Link className="button primary" to="/dashboard/links">
+          <Plus size={16} />
           Add link
-        </button>
+        </Link>
       </div>
 
-      {error && <div className="form-error page-error">{error}</div>}
-
-      <div className="stats-row">
-        <div className="stat">
-          <span>Links</span>
-          <strong>{links.length}</strong>
-        </div>
-
-        <div className="stat">
-          <span>On stream</span>
-          <strong>{active}</strong>
-        </div>
-
-        <div className="stat">
-          <span>Total opens</span>
-          <strong>{clickTotal}</strong>
-        </div>
-      </div>
-
-      <div className="panel links-panel">
-        <div className="panel-head">
+      <div className="overview-kpis">
+        <article className="overview-kpi">
+          <Link2 size={18} />
           <div>
-            <span className="panel-label">YOUR LINKS</span>
-            <strong>Top to bottom rotation order</strong>
+            <span>Links</span>
+            <strong>
+              {links.length}
+              {limit !== null && <em> / {limit}</em>}
+            </strong>
           </div>
-        </div>
+        </article>
 
-        {links.length === 0 ? (
-          <div className="empty-panel">
-            <strong>No links yet.</strong>
-            <span>Add your first link. NupHub will create the short URL.</span>
+        <article className="overview-kpi">
+          <MonitorUp size={18} />
+          <div>
+            <span>On stream</span>
+            <strong>{active}</strong>
           </div>
-        ) : (
-          <div className="stream-link-list">
-            {links.map((item, index) => (
-              <div className="stream-link" key={item.id}>
-                <div className="move-buttons">
-                  <button
-                    className="tiny-icon"
-                    disabled={index === 0}
-                    onClick={() => void move(index, -1)}
-                    title="Move up"
-                  >
-                    <ArrowUp size={14} />
-                  </button>
+        </article>
 
-                  <button
-                    className="tiny-icon"
-                    disabled={index === links.length - 1}
-                    onClick={() => void move(index, 1)}
-                    title="Move down"
-                  >
-                    <ArrowDown size={14} />
-                  </button>
-                </div>
-
-                <div className="link-copy">
-                  <strong>{item.label}</strong>
-
-                  <button
-                    className="link-copy-button"
-                    onClick={() =>
-                      void copy(
-                        `${window.location.origin}/${item.slug}`,
-                        item.id,
-                      )
-                    }
-                  >
-                    nuphub.com/{item.slug}
-                    <Copy size={12} />
-                  </button>
-
-                  <small>{item.destination_url}</small>
-                </div>
-
-                <span className="click-count">{item.clicks} opens</span>
-
-                <button
-                  className="icon-button"
-                  onClick={() => void toggle(item)}
-                  title={item.enabled ? "Hide from OBS" : "Show in OBS"}
-                >
-                  {item.enabled ? <Eye size={17} /> : <EyeOff size={17} />}
-                </button>
-
-                <button
-                  className="icon-button"
-                  onClick={() => {
-                    setEditing(item);
-                    setModalOpen(true);
-                  }}
-                  title="Edit"
-                >
-                  <Edit3 size={17} />
-                </button>
-
-                <button
-                  className="icon-button danger"
-                  onClick={() => void remove(item)}
-                  title="Delete"
-                >
-                  <Trash2 size={17} />
-                </button>
-              </div>
-            ))}
+        <article className="overview-kpi">
+          <MousePointerClick size={18} />
+          <div>
+            <span>Total opens</span>
+            <strong>{clicks}</strong>
           </div>
-        )}
+        </article>
+
+        <article className="overview-kpi plan-kpi">
+          <Sparkles size={18} />
+          <div>
+            <span>Plan</span>
+            <strong>{planDefinition.name}</strong>
+          </div>
+        </article>
       </div>
 
-      {copied && <div className="toast">Copied.</div>}
+      <div className="overview-grid">
+        <section className="panel overview-panel">
+          <div className="panel-head">
+            <div>
+              <span className="panel-label">QUICK START</span>
+              <strong>Your OBS source</strong>
+            </div>
+          </div>
 
-      <LinkEditorModal
-        open={modalOpen}
-        link={editing}
-        defaultSortOrder={
-          links.length === 0
-            ? 100
-            : Math.max(...links.map((item) => item.sort_order)) + 100
-        }
-        onClose={() => {
-          setModalOpen(false);
-          setEditing(null);
-        }}
-        onSave={saveLink}
-      />
+          <div className="overview-source">
+            <code>{obsUrl || "Create your profile first"}</code>
+            <button
+              className="icon-button"
+              disabled={!obsUrl}
+              onClick={() => void copyObs()}
+              title="Copy OBS source"
+            >
+              <Copy size={16} />
+            </button>
+            {profile && (
+              <a
+                className="icon-button"
+                href={`/obs/${profile.handle}`}
+                target="_blank"
+                rel="noreferrer"
+                title="Open OBS source"
+              >
+                <ExternalLink size={16} />
+              </a>
+            )}
+          </div>
+
+          <div className="overview-actions">
+            <Link to="/dashboard/links">
+              <Link2 size={17} />
+              <span>
+                <strong>Manage links</strong>
+                <small>Add, reorder and turn links on or off.</small>
+              </span>
+              <ArrowRight size={15} />
+            </Link>
+
+            <Link to="/dashboard/overlay">
+              <MonitorUp size={17} />
+              <span>
+                <strong>Customize overlay</strong>
+                <small>Colors, opacity, alignment and style.</small>
+              </span>
+              <ArrowRight size={15} />
+            </Link>
+          </div>
+        </section>
+
+        <section className="panel overview-panel">
+          <div className="panel-head">
+            <div>
+              <span className="panel-label">RECENT LINKS</span>
+              <strong>{links.length ? "Ready for stream" : "Nothing here yet"}</strong>
+            </div>
+
+            <Link className="panel-text-link" to="/dashboard/links">
+              View all
+            </Link>
+          </div>
+
+          {recent.length ? (
+            <div className="recent-link-list">
+              {recent.map((item) => (
+                <div key={item.id}>
+                  <span className={item.enabled ? "status-dot on" : "status-dot"} />
+                  <div>
+                    <strong>{item.label}</strong>
+                    <small>nuphub.com/{item.slug}</small>
+                  </div>
+                  <b>{item.clicks}</b>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-panel clean-empty">
+              <strong>Add your first link.</strong>
+              <span>NupHub generates the short URL automatically.</span>
+            </div>
+          )}
+
+          {plan === "free" && (
+            <Link className="upgrade-strip" to="/dashboard/billing">
+              <span>
+                <strong>Unlock unlimited links + full overlay controls</strong>
+                <small>Pro Lifetime is a one-time $29 purchase.</small>
+              </span>
+              <ArrowRight size={17} />
+            </Link>
+          )}
+        </section>
+      </div>
+
+      {copied && <div className="toast">OBS URL copied.</div>}
     </DashboardShell>
   );
 }

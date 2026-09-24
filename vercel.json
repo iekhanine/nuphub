@@ -1,6 +1,9 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/.*", "dest": "/index.html" }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/((?!api/|assets/|src/|@vite/|@react-refresh|node_modules/).*)",
+      "destination": "/index.html"
+    }
   ]
 }

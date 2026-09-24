@@ -30,6 +30,25 @@ export type OverlayStyle = "glass" | "solid" | "minimal";
 export type OverlayAccentBarSide = "left" | "right" | "none";
 export type OverlayTextAlign = "left" | "right";
 
+export type PlanId = "free" | "pro" | "creator";
+export type AdminRole = "admin" | "owner";
+export type NupHubRole =
+  | "not_enrolled"
+  | "user"
+  | "moderator"
+  | "admin"
+  | "owner";
+export type OtlRole = "none" | "employee" | "admin" | "owner";
+
+export type Entitlement = {
+  user_id: string;
+  plan: PlanId;
+  source: string;
+  purchased_at: string | null;
+  square_payment_id: string | null;
+  updated_at: string;
+};
+
 export type OverlaySettings = {
   user_id: string;
   rotation_seconds: number;
@@ -68,4 +87,20 @@ export type PublicStreamer = {
     show_url: boolean;
   };
   links: PublicOverlayLink[];
+};
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  created_at: string;
+  last_sign_in_at: string | null;
+  handle: string | null;
+  display_name: string | null;
+  plan: PlanId;
+  entitlement_source: string;
+  purchased_at: string | null;
+  admin_role: AdminRole | null;
+  enrolled: boolean;
+  nuphub_role: NupHubRole;
+  otl_role: OtlRole;
 };

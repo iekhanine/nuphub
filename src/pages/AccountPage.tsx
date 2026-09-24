@@ -1,22 +1,35 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, Save } from "lucide-react";
+import { Crown, ExternalLink, Save, ShieldCheck } from "lucide-react";
 
 import { DashboardShell } from "../components/DashboardShell";
 import { useAuth } from "../context/AuthContext";
-import { getMyProfile, updateProfile } from "../lib/data";
-import type { Profile } from "../types";
+import {
+  getMyAdminRole,
+  getMyEntitlement,
+  getMyProfile,
+  updateProfile,
+} from "../lib/data";
+import { PLANS } from "../lib/plans";
+import type { AdminRole, Entitlement, Profile } from "../types";
+import "../styles/admin-users.css";
 
 export default function AccountPage() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
+  const [adminRole, setAdminRole] = useState<AdminRole | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    getMyProfile().then((value) => {
-      setProfile(value);
-      setDisplayName(value?.display_name ?? "");
-    });
+    Promise.all([getMyProfile(), getMyEntitlement(), getMyAdminRole()]).then(
+      ([value, nextEntitlement, nextAdminRole]) => {
+        setProfile(value);
+        setDisplayName(value?.display_name ?? "");
+        setEntitlement(nextEntitlement);
+        setAdminRole(nextAdminRole);
+      },
+    );
   }, []);
 
   async function save() {
@@ -76,6 +89,38 @@ export default function AccountPage() {
             </button>
 
             {message && <div className="form-success">{message}</div>}
+          </div>
+        </div>
+
+        <div className="panel account-panel">
+          <div className="panel-head">
+            <div>
+              <span className="panel-label">ACCESS</span>
+              <strong>Plan & role</strong>
+            </div>
+          </div>
+
+          <div className="account-public-card account-access-card">
+            <div>
+              <span>Plan</span>
+              <strong>
+                {entitlement ? PLANS[entitlement.plan].name : "Loading…"}
+              </strong>
+            </div>
+
+            {adminRole && (
+              <div>
+                <span>Admin role</span>
+                <strong className="account-role-line">
+                  {adminRole === "owner" ? (
+                    <Crown size={15} />
+                  ) : (
+                    <ShieldCheck size={15} />
+                  )}
+                  {adminRole === "owner" ? "Owner" : "Admin"}
+                </strong>
+              </div>
+            )}
           </div>
         </div>
 

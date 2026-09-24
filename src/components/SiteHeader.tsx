@@ -9,6 +9,7 @@ const publicLinks = [
   { to: "/features", label: "Features" },
   { to: "/obs", label: "OBS" },
   { to: "/twitch", label: "Twitch" },
+  { to: "/pricing", label: "Pricing" },
 ];
 
 export function SiteHeader() {

@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  LayoutDashboard,
   Link2,
   MonitorUp,
   MousePointer2,
@@ -9,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { SiteHeader } from "../components/SiteHeader";
+import { useAuth } from "../context/AuthContext";
 
 const tools = [
   {
@@ -42,6 +44,8 @@ const tools = [
 ];
 
 export default function Home() {
+  const { user, loading } = useAuth();
+
   return (
     <main className="marketing-page marketing-home">
       <SiteHeader />
@@ -54,26 +58,31 @@ export default function Home() {
           </span>
 
           <h1>
-            Your Socials. 
+            Put your links
             <br />
-            <span>On stream.</span>
+            <span>on stream.</span>
           </h1>
 
           <p>
-            Short URLs your viewers can type.
-            <br />
-            <span>OBS overlay that shows them live.</span>
-            <br />
-            Cycle through your links based on a timer you set. 
+            Short URLs your viewers can type. OBS overlays that show them live.
           </p>
 
           <div className="hero-actions">
-            <Link className="button primary" to="/signup">
-              Create account <ArrowRight size={17} />
-            </Link>
-            <Link className="button ghost" to="/login">
-              Sign in
-            </Link>
+            {!loading && user ? (
+              <Link className="button primary" to="/dashboard">
+                <LayoutDashboard size={17} />
+                Open dashboard
+              </Link>
+            ) : !loading ? (
+              <>
+                <Link className="button primary" to="/signup">
+                  Create account <ArrowRight size={17} />
+                </Link>
+                <Link className="button ghost" to="/login">
+                  Sign in
+                </Link>
+              </>
+            ) : null}
           </div>
 
           <div className="hero-tags">
