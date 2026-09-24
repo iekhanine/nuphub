@@ -35,6 +35,8 @@ export type OverlaySettings = {
   rotation_seconds: number;
   position: OverlayPosition;
   accent_color: string;
+  background_color: string;
+  text_color: string;
   style: OverlayStyle;
   background_opacity: number;
   accent_bar_side: OverlayAccentBarSide;
@@ -56,6 +58,8 @@ export type PublicStreamer = {
     rotation_seconds: number;
     position: OverlayPosition;
     accent_color: string;
+    background_color: string;
+    text_color: string;
     style: OverlayStyle;
     background_opacity: number;
     accent_bar_side: OverlayAccentBarSide;

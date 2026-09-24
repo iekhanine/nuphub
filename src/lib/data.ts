@@ -33,11 +33,7 @@ export async function getMyProfile() {
 
 export async function requireMyProfile() {
   const profile = await getMyProfile();
-
-  if (!profile) {
-    throw new Error("NUPHUB_PROFILE_REQUIRED");
-  }
-
+  if (!profile) throw new Error("NUPHUB_PROFILE_REQUIRED");
   return profile;
 }
 
@@ -136,6 +132,8 @@ export async function saveOverlaySettings(
       | "rotation_seconds"
       | "position"
       | "accent_color"
+      | "background_color"
+      | "text_color"
       | "style"
       | "background_opacity"
       | "accent_bar_side"

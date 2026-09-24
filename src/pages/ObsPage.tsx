@@ -13,8 +13,9 @@ export default function ObsPage() {
           <span className="eyebrow">OBS OVERLAY</span>
           <h1>One source. Tiny footprint.</h1>
           <p>
-            Add your personal NupHub browser source to OBS once. The SVG overlay
-            updates from your dashboard without rebuilding the scene.
+            Add your personal NupHub browser source to OBS once. 
+            <br /><br /> 
+            The overlay updates from your dashboard without rebuilding the scene.
           </p>
 
           <div className="page-cta-row">

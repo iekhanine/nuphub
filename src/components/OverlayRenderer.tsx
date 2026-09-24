@@ -24,7 +24,6 @@ function clampOpacity(value: number | undefined) {
 export function OverlayRenderer({ streamer, preview = false }: Props) {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
-
   const links = streamer.links;
 
   useEffect(() => {
@@ -74,8 +73,6 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           width="100%"
           height="100%"
-          role="img"
-          aria-label="Empty NupHub overlay"
         >
           <rect
             x="8"
@@ -103,16 +100,14 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
   }
 
   const accent = streamer.settings.accent_color || "#8b5cf6";
+  const background = streamer.settings.background_color || "#0a080e";
+  const textColor = streamer.settings.text_color || "#ffffff";
   const style = streamer.settings.style;
-  const backgroundOpacity = clampOpacity(
-    streamer.settings.background_opacity,
-  );
+  const backgroundOpacity = clampOpacity(streamer.settings.background_opacity);
   const accentBarSide = streamer.settings.accent_bar_side ?? "left";
   const textAlign = streamer.settings.text_align ?? "left";
 
   const showPanel = style !== "minimal";
-  const fill = style === "solid" ? "#0a0810" : "#0a080e";
-
   const textAnchor = textAlign === "right" ? "end" : "start";
   const textX = textAlign === "right" ? 492 : 28;
   const labelY = streamer.settings.show_url ? 40 : 60;
@@ -139,7 +134,7 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
       >
         <defs>
           <linearGradient id="nhGlass" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity=".11" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity=".12" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
@@ -162,7 +157,7 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
               width="504"
               height="84"
               rx="10"
-              fill={fill}
+              fill={background}
               fillOpacity={backgroundOpacity}
               stroke="rgba(255,255,255,.13)"
             />
@@ -196,7 +191,8 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
           <text
             x={textX}
             y={labelY}
-            fill="#b9b1c3"
+            fill={textColor}
+            fillOpacity=".72"
             fontSize="12"
             fontWeight="900"
             letterSpacing="1.2"
@@ -211,7 +207,7 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
           <text
             x={textX}
             y={urlY}
-            fill="#ffffff"
+            fill={textColor}
             fontSize="25"
             fontWeight="800"
             letterSpacing="-0.5"

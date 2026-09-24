@@ -61,6 +61,8 @@ export default function OverlaySettingsPage() {
         rotation_seconds: settings.rotation_seconds,
         position: settings.position,
         accent_color: settings.accent_color,
+        background_color: settings.background_color ?? "#0a080e",
+        text_color: settings.text_color ?? "#ffffff",
         style: settings.style,
         background_opacity: settings.background_opacity ?? 0.94,
         accent_bar_side: settings.accent_bar_side ?? "left",
@@ -86,6 +88,8 @@ export default function OverlaySettingsPage() {
         rotation_seconds: settings.rotation_seconds,
         position: settings.position,
         accent_color: settings.accent_color,
+        background_color: settings.background_color,
+        text_color: settings.text_color,
         style: settings.style,
         background_opacity: settings.background_opacity,
         accent_bar_side: settings.accent_bar_side,
@@ -185,7 +189,7 @@ export default function OverlaySettingsPage() {
             </label>
 
             <label>
-              Background transparency
+              Background opacity
               <div className="range-row">
                 <input
                   type="range"
@@ -196,16 +200,12 @@ export default function OverlaySettingsPage() {
                   onChange={(event) =>
                     setSettings({
                       ...settings,
-                      background_opacity:
-                        Number(event.target.value) / 100,
+                      background_opacity: Number(event.target.value) / 100,
                     })
                   }
                 />
                 <strong>{opacityPercent}%</strong>
               </div>
-              <small>
-                Controls the pill background only. Text stays fully visible.
-              </small>
             </label>
 
             <label>
@@ -280,7 +280,41 @@ export default function OverlaySettingsPage() {
             </label>
 
             <label>
-              Accent
+              Text color
+              <div className="color-row">
+                <input
+                  type="color"
+                  value={settings.text_color ?? "#ffffff"}
+                  onChange={(event) =>
+                    setSettings({
+                      ...settings,
+                      text_color: event.target.value,
+                    })
+                  }
+                />
+                <code>{settings.text_color ?? "#ffffff"}</code>
+              </div>
+            </label>
+
+            <label>
+              Background color
+              <div className="color-row">
+                <input
+                  type="color"
+                  value={settings.background_color ?? "#0a080e"}
+                  onChange={(event) =>
+                    setSettings({
+                      ...settings,
+                      background_color: event.target.value,
+                    })
+                  }
+                />
+                <code>{settings.background_color ?? "#0a080e"}</code>
+              </div>
+            </label>
+
+            <label>
+              Accent color
               <div className="color-row">
                 <input
                   type="color"

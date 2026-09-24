@@ -54,13 +54,17 @@ export default function Home() {
           </span>
 
           <h1>
-            Put your links
+            Your Socials. 
             <br />
-            <span>on stream.</span>
+            <span>On stream.</span>
           </h1>
 
           <p>
-            Short URLs your viewers can type. OBS overlays that show them live.
+            Short URLs your viewers can type.
+            <br />
+            <span>OBS overlay that shows them live.</span>
+            <br />
+            Cycle through your links based on a timer you set. 
           </p>
 
           <div className="hero-actions">
