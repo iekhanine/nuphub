@@ -401,3 +401,106 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 .setup-checks svg {
   color: #7ff0b0;
 }
+
+/* =========================================================
+   Public marketing pages
+   ========================================================= */
+.marketing-home .tool-strip { margin-bottom: 48px; }
+.tool-card-link { color: inherit; text-decoration: none; transition: background .18s ease, border-color .18s ease; }
+.tool-card-link:hover { background: #121019; }
+
+.header-public-nav { flex: 1; justify-content: flex-end; }
+.header-page-links, .header-account-links { display: flex; align-items: center; gap: 4px; }
+.header-page-links { margin-right: 10px; }
+.header-nav .header-page-link { color: #81798c; }
+.header-nav .header-page-link.active { color: #fff; background: #15111d; }
+
+.marketing-section {
+  min-height: calc(100vh - 66px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 54px 0 64px;
+}
+.marketing-intro { max-width: 720px; }
+.marketing-intro h1 { margin: 10px 0 14px; font-size: clamp(42px,5vw,68px); line-height: .96; letter-spacing: -.055em; }
+.marketing-intro p { max-width: 690px; color: #9c94a7; font-size: 16px; line-height: 1.6; }
+.page-cta-row { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 26px; }
+
+.marketing-step-grid, .feature-page-grid, .obs-option-grid, .twitch-card-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 34px;
+}
+.marketing-step-grid { grid-template-columns: repeat(3,1fr); }
+.marketing-step-grid article,
+.feature-page-grid article,
+.obs-option-grid article,
+.twitch-card-grid article,
+.twitch-store-card {
+  min-width: 0;
+  border: 1px solid #2e2837;
+  border-radius: 12px;
+  background: #0d0b11;
+}
+.marketing-step-grid article { display: grid; gap: 10px; min-height: 190px; padding: 22px; }
+.marketing-step-grid b { color: var(--violet2); font-size: 10px; }
+.marketing-step-grid svg, .feature-page-grid svg, .obs-option-grid svg, .twitch-card-grid svg { color: var(--violet2); }
+.marketing-step-grid strong, .feature-page-grid strong, .obs-option-grid strong, .twitch-card-grid strong { font-size: 15px; }
+.marketing-step-grid span, .feature-page-grid span, .obs-option-grid span, .twitch-card-grid span { color: #81798c; font-size: 12px; line-height: 1.5; }
+
+.feature-page-grid { grid-template-columns: repeat(2,1fr); max-width: 900px; }
+.feature-page-grid article { display: grid; grid-template-columns: auto 1fr; column-gap: 13px; row-gap: 5px; padding: 20px; }
+.feature-page-grid article svg { grid-row: 1 / span 2; }
+
+.obs-info-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 34px; align-content: center; }
+.obs-info-layout .marketing-intro { align-self: center; }
+.obs-marketing-demo {
+  position: relative;
+  min-height: 310px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 28px;
+  border: 1px solid #30283d;
+  border-radius: 14px;
+  background: radial-gradient(circle at 50% 28%,rgba(139,92,246,.2),transparent 28%),linear-gradient(180deg,#17121f,#09080d);
+}
+.obs-marketing-pill {
+  position: relative;
+  z-index: 2;
+  width: min(470px,94%);
+  padding: 13px 17px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-left: 4px solid var(--violet2);
+  border-radius: 9px;
+  background: rgba(10,8,14,.72);
+}
+.obs-marketing-pill span { display: block; color: #a99fb5; font-size: 10px; font-weight: 900; letter-spacing: .13em; }
+.obs-marketing-pill strong { display: block; margin-top: 3px; font-size: clamp(18px,2vw,25px); }
+.obs-option-grid { grid-column: 1 / -1; grid-template-columns: repeat(2,1fr); margin-top: 0; }
+.obs-option-grid article { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; row-gap: 4px; padding: 18px; }
+.obs-option-grid article svg { grid-row: 1 / span 2; }
+
+.twitch-page-layout { max-width: 1040px; }
+.twitch-card-grid { grid-template-columns: 1fr 1fr; }
+.twitch-card-grid article { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; row-gap: 5px; padding: 22px; }
+.twitch-card-grid article svg { grid-row: 1 / span 2; }
+.twitch-store-card { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 22px; text-decoration: none; }
+.twitch-store-card > svg:first-child, .twitch-store-card > svg:last-child { color: var(--violet2); }
+.twitch-store-card div { display: grid; gap: 4px; }
+.twitch-store-card span { color: #81798c; font-size: 12px; }
+
+@media (max-width: 980px) {
+  .header-page-links { display: none; }
+  .obs-info-layout { grid-template-columns: 1fr; }
+  .marketing-step-grid { grid-template-columns: 1fr; }
+  .feature-page-grid, .obs-option-grid, .twitch-card-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .marketing-section { min-height: auto; padding: 42px 0; }
+  .marketing-intro h1 { font-size: 46px; }
+  .header-account-links > a:not(.nav-primary) { display: none; }
+}

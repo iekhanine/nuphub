@@ -13,6 +13,10 @@ import AccountPage from "./pages/AccountPage";
 import ObsOverlayPage from "./pages/ObsOverlayPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import RedirectPage from "./pages/RedirectPage";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import ObsPage from "./pages/ObsPage";
+import TwitchPage from "./pages/TwitchPage";
 
 function NupHubAppRoute({ children }: { children: React.ReactNode }) {
   return (
@@ -26,6 +30,10 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
+      <Route path="/features" element={<FeaturesPage />} />
+      <Route path="/obs" element={<ObsPage />} />
+      <Route path="/twitch" element={<TwitchPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
