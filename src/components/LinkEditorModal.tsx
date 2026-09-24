@@ -1,0 +1,187 @@
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+
+import type { StreamLink } from "../types";
+import { validHttpUrl } from "../lib/validation";
+import "../styles/link-editor.css";
+
+type Props = {
+  open: boolean;
+  link?: StreamLink | null;
+  defaultSortOrder: number;
+  onClose: () => void;
+  onSave: (values: {
+    label: string;
+    destination_url: string;
+    sort_order: number;
+  }) => Promise<void>;
+};
+
+function errorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof (error as { message?: unknown }).message === "string"
+  ) {
+    return (error as { message: string }).message;
+  }
+
+  return "Could not save link.";
+}
+
+export function LinkEditorModal({
+  open,
+  link,
+  defaultSortOrder,
+  onClose,
+  onSave,
+}: Props) {
+  const [label, setLabel] = useState("");
+  const [destination, setDestination] = useState("");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+
+    setLabel(link?.label ?? "");
+    setDestination(link?.destination_url ?? "");
+    setError("");
+  }, [open, link]);
+
+  if (!open) return null;
+
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    setError("");
+
+    const cleanLabel = label.trim();
+    const cleanDestination = destination.trim();
+
+    if (!cleanLabel) {
+      setError("Enter a name for this link.");
+      return;
+    }
+
+    if (cleanLabel.length > 24) {
+      setError("Link names can be up to 24 characters.");
+      return;
+    }
+
+    if (!validHttpUrl(cleanDestination)) {
+      setError("Enter a full URL beginning with http:// or https://");
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      await onSave({
+        label: cleanLabel,
+        destination_url: cleanDestination,
+        sort_order: link?.sort_order ?? defaultSortOrder,
+      });
+
+      onClose();
+    } catch (err) {
+      console.error("NupHub link save failed:", err);
+      setError(errorMessage(err));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="modal-backdrop" onMouseDown={onClose}>
+      <section
+        className="nh-link-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={link ? "Edit link" : "Add link"}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <header className="nh-link-modal-header">
+          <div>
+            <span className="nh-link-eyebrow">STREAM LINK</span>
+            <h2>{link ? "Edit link" : "Add a link"}</h2>
+          </div>
+
+          <button
+            className="nh-link-close"
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <X size={16} />
+          </button>
+        </header>
+
+        <form className="nh-link-form" onSubmit={submit}>
+          <div className="nh-link-field">
+            <div className="nh-link-field-head">
+              <label htmlFor="nh-link-name">Name</label>
+              <span>{label.length}/24</span>
+            </div>
+
+            <input
+              id="nh-link-name"
+              value={label}
+              onChange={(event) => setLabel(event.target.value.slice(0, 24))}
+              placeholder="Join the Discord"
+              maxLength={24}
+              autoFocus
+            />
+          </div>
+
+          <div className="nh-link-field">
+            <label htmlFor="nh-link-destination">Destination</label>
+
+            <input
+              id="nh-link-destination"
+              value={destination}
+              onChange={(event) => setDestination(event.target.value)}
+              placeholder="https://discord.gg/..."
+              inputMode="url"
+            />
+          </div>
+
+          <div className="nh-link-generated">
+            {link ? (
+              <>
+                <span>Short URL</span>
+                <strong>nuphub.com/{link.slug}</strong>
+              </>
+            ) : (
+              <span>
+                A short NupHub URL will be generated automatically when you save.
+              </span>
+            )}
+          </div>
+
+          {error && <div className="nh-link-error">{error}</div>}
+
+          <footer className="nh-link-actions">
+            <button
+              className="nh-link-button nh-link-button-secondary"
+              type="button"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+
+            <button
+              className="nh-link-button nh-link-button-primary"
+              type="submit"
+              disabled={saving}
+            >
+              {saving ? "Saving..." : link ? "Save" : "Add link"}
+            </button>
+          </footer>
+        </form>
+      </section>
+    </div>
+  );
+}

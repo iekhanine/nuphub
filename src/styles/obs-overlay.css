@@ -1,0 +1,112 @@
+/*
+  NupHub OBS overlay — compact source.
+  Every selector is namespaced to prevent dashboard/site collisions.
+
+  Recommended OBS Browser Source:
+  Width: 520
+  Height: 104
+*/
+
+.nh-obs-page {
+  width: 520px;
+  height: 104px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.nh-obs-shell {
+  width: 520px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.nh-obs-shell-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.nh-obs-card {
+  width: fit-content;
+  min-width: 0;
+  max-width: 504px;
+  padding: 11px 15px 12px;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 350ms ease,
+    transform 350ms ease;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.nh-obs-fading {
+  opacity: 0;
+  transform: translateY(3px);
+}
+
+.nh-obs-label {
+  display: block;
+  overflow: hidden;
+  max-width: 470px;
+  margin: 0 0 2px;
+  color: #b9b1c3;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: .11em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nh-obs-url {
+  display: block;
+  overflow: hidden;
+  max-width: 470px;
+  margin: 0;
+  color: #fff;
+  font-size: 23px;
+  font-weight: 850;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nh-obs-style-glass {
+  border: 1px solid rgba(255,255,255,.13);
+  border-left: 4px solid var(--nh-obs-accent, #8b5cf6);
+  border-radius: 9px;
+  background: rgba(10,8,14,.92);
+  box-shadow: 0 9px 24px rgba(0,0,0,.26);
+}
+
+.nh-obs-style-solid {
+  border-left: 4px solid var(--nh-obs-accent, #8b5cf6);
+  border-radius: 8px;
+  background: #0a0810;
+  box-shadow: 0 9px 24px rgba(0,0,0,.24);
+}
+
+.nh-obs-style-minimal {
+  padding-left: 13px;
+  border-left: 4px solid var(--nh-obs-accent, #8b5cf6);
+  background: transparent;
+  box-shadow: none;
+}
+
+.nh-obs-empty {
+  padding: 10px 12px;
+  border: 1px dashed #43384f;
+  border-radius: 7px;
+  color: #766e80;
+  background: #0b090e;
+  font-size: 11px;
+}

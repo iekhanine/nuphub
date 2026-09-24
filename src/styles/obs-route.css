@@ -1,0 +1,30 @@
+/*
+  OBS route isolation.
+  The normal NupHub site uses a dark radial-gradient body background.
+  OBS must receive alpha/transparency instead.
+*/
+
+html.nh-obs-transparent-route,
+body.nh-obs-transparent-route,
+body.nh-obs-transparent-route #root {
+  margin: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+body.nh-obs-transparent-route {
+  color-scheme: normal;
+}
+
+body.nh-obs-transparent-route #root {
+  position: relative;
+}
+
+body.nh-obs-transparent-route .nh-svg-page {
+  background: transparent !important;
+  background-image: none !important;
+}

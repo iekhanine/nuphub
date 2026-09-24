@@ -1,0 +1,174 @@
+/* =========================================================
+   NUPHUB LINK EDITOR
+   Completely scoped rebuild of Add/Edit Link modal.
+   ========================================================= */
+
+.nh-link-modal {
+  width: min(440px, calc(100vw - 28px));
+  overflow: hidden;
+  border: 1px solid #2c2634;
+  border-radius: 12px;
+  background: #100d14;
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+}
+
+.nh-link-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 18px 16px;
+  border-bottom: 1px solid #29232f;
+}
+
+.nh-link-modal-header h2 {
+  margin: 4px 0 0;
+  color: #f6f3f8;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.nh-link-eyebrow {
+  color: #776e82;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .15em;
+}
+
+.nh-link-close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid #332c3c;
+  border-radius: 8px;
+  color: #92899d;
+  background: #15111a;
+  cursor: pointer;
+}
+
+.nh-link-close:hover {
+  color: #fff;
+  border-color: #494054;
+}
+
+.nh-link-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+}
+
+.nh-link-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.nh-link-field > label,
+.nh-link-field-head label {
+  color: #c7c0cf;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.nh-link-field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nh-link-field-head span {
+  color: #6d6576;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.nh-link-field input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #312a39;
+  border-radius: 8px;
+  outline: none;
+  color: #f3eff6;
+  background: #0b090e;
+  font: inherit;
+  font-size: 12px;
+}
+
+.nh-link-field input::placeholder {
+  color: #5f5867;
+}
+
+.nh-link-field input:focus {
+  border-color: #7c4dff;
+  box-shadow: 0 0 0 2px rgba(124,77,255,.12);
+}
+
+.nh-link-generated {
+  min-height: 18px;
+  color: #746c7d;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.nh-link-generated span,
+.nh-link-generated strong {
+  display: block;
+}
+
+.nh-link-generated strong {
+  margin-top: 3px;
+  color: #aa8dff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.nh-link-error {
+  padding: 9px 10px;
+  border: 1px solid rgba(239,68,68,.25);
+  border-radius: 7px;
+  color: #fca5a5;
+  background: rgba(127,29,29,.12);
+  font-size: 11px;
+}
+
+.nh-link-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.nh-link-button {
+  height: 38px;
+  padding: 0 15px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.nh-link-button:disabled {
+  opacity: .55;
+  cursor: default;
+}
+
+.nh-link-button-secondary {
+  border: 1px solid #332c3c;
+  color: #d4ced9;
+  background: #15111a;
+}
+
+.nh-link-button-primary {
+  border: 1px solid #8257ff;
+  color: #fff;
+  background: #7546ed;
+}
+
+.nh-link-button-primary:hover:not(:disabled) {
+  background: #8257ff;
+}

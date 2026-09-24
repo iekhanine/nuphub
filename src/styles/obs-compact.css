@@ -1,0 +1,116 @@
+/* =========================================================
+   NUPHUB OBS COMPACT OVERLAY
+   Browser source should be the overlay itself — not a full scene.
+   Recommended OBS Browser Source size: 900 x 140.
+   ========================================================= */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+.obs-page-compact {
+  width: 900px;
+  height: 140px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.obs-page-compact,
+.obs-page-compact * {
+  box-sizing: border-box;
+}
+
+.obs-overlay-shell {
+  width: 900px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 14px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.obs-overlay-shell.is-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.obs-overlay-card {
+  width: auto;
+  max-width: 860px;
+  min-width: 420px;
+  padding: 15px 20px 16px;
+  border-left: 4px solid var(--overlay-accent, #8b5cf6);
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 350ms ease,
+    transform 350ms ease;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+.obs-overlay-card.is-fading {
+  opacity: 0;
+  transform: translate3d(0, 4px, 0);
+}
+
+.obs-overlay-label {
+  display: block;
+  margin-bottom: 3px;
+  color: #b9b1c3;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.obs-overlay-url {
+  display: block;
+  overflow: hidden;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 850;
+  line-height: 1.12;
+  letter-spacing: -.025em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overlay-style-glass {
+  border: 1px solid rgba(255,255,255,.13);
+  border-left: 4px solid var(--overlay-accent, #8b5cf6);
+  border-radius: 10px;
+  background: rgba(10, 8, 14, .92);
+  box-shadow: 0 12px 30px rgba(0,0,0,.28);
+}
+
+.overlay-style-solid {
+  border-left: 4px solid var(--overlay-accent, #8b5cf6);
+  border-radius: 9px;
+  background: #0a0810;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
+
+.overlay-style-minimal {
+  padding-left: 16px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.overlay-empty {
+  padding: 12px 14px;
+  border: 1px dashed #43384f;
+  border-radius: 7px;
+  color: #766e80;
+  background: #0b090e;
+  font-size: 12px;
+}

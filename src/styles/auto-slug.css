@@ -1,0 +1,105 @@
+/* =========================================================
+   NUPHUB AUTO-LINK MODAL FIX
+   Scoped to the auto-generated short-link UI only.
+   ========================================================= */
+
+.field-counter {
+  display: block;
+  margin-top: 5px;
+  color: #777080 !important;
+  font-size: 10px;
+  font-weight: 700 !important;
+  line-height: 1;
+  text-align: right;
+}
+
+.auto-slug-note {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  margin: 2px 0 4px;
+  padding: 11px 12px;
+  border: 1px solid #2f2938;
+  border-radius: 9px;
+  background: rgba(255,255,255,.025);
+}
+
+.auto-slug-note > svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: #a78bfa;
+  flex: 0 0 auto;
+}
+
+.auto-slug-note > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auto-slug-note strong {
+  display: block;
+  margin: 0;
+  color: #f4f0f8;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.auto-slug-note span {
+  display: block;
+  margin: 0;
+  color: #8c8494;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.assigned-slug {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 2px 0 4px;
+  padding: 10px 12px;
+  border: 1px solid #2f2938;
+  border-radius: 9px;
+  background: rgba(255,255,255,.025);
+}
+
+.assigned-slug span {
+  color: #736b7e;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: .13em;
+}
+
+.assigned-slug strong {
+  overflow: hidden;
+  color: #b89cff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Give labels/fields consistent breathing room without altering global forms. */
+.modal-form > label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-form > label > input {
+  width: 100%;
+}
+
+/* Keep the action row visually separated from the final field. */
+.modal-actions {
+  margin-top: 2px;
+}
