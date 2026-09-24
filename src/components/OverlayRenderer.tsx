@@ -1,6 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
+import QRCode from "qrcode";
 
-import type { PublicStreamer } from "../types";
+import type {
+  OverlayFontFamily,
+  PublicStreamer,
+} from "../types";
 import "../styles/obs-svg.css";
 
 type Props = {
@@ -8,59 +17,175 @@ type Props = {
   preview?: boolean;
 };
 
-const WIDTH = 520;
-const HEIGHT = 104;
+type TransitionPhase = "idle" | "exit" | "enter";
+
+const VIEW_WIDTH = 560;
+const VIEW_HEIGHT = 144;
+
+const ARTWORK_WIDTH = 520;
+const ARTWORK_HEIGHT = 104;
+const OFFSET_X = 20;
+const OFFSET_Y = 20;
+
+const fontStacks: Record<OverlayFontFamily, string> = {
+  inter: 'Inter, "Segoe UI", Arial, sans-serif',
+  arial: 'Arial, Helvetica, sans-serif',
+  verdana: 'Verdana, Geneva, sans-serif',
+  trebuchet: '"Trebuchet MS", Arial, sans-serif',
+  georgia: 'Georgia, "Times New Roman", serif',
+  impact: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+  courier: '"Courier New", Courier, monospace',
+};
 
 function truncate(value: string, max: number) {
   if (value.length <= max) return value;
   return `${value.slice(0, Math.max(0, max - 1))}…`;
 }
 
-function clampOpacity(value: number | undefined) {
-  if (!Number.isFinite(value)) return 0.94;
-  return Math.min(1, Math.max(0, value ?? 0.94));
+function clamp(
+  value: number | undefined,
+  min: number,
+  max: number,
+  fallback: number,
+) {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(max, Math.max(min, value ?? fallback));
+}
+
+function chooseWeightedNext(
+  links: PublicStreamer["links"],
+  currentIndex: number,
+) {
+  if (links.length <= 1) return currentIndex;
+
+  const candidates = links.map((item, index) => ({
+    index,
+    weight: Math.max(1, Math.min(10, item.weight ?? 1)),
+  }));
+
+  const pickOnce = () => {
+    const total = candidates.reduce(
+      (sum, item) => sum + item.weight,
+      0,
+    );
+
+    let pick = Math.random() * total;
+
+    for (const item of candidates) {
+      pick -= item.weight;
+
+      if (pick <= 0) {
+        return item.index;
+      }
+    }
+
+    return candidates[candidates.length - 1]?.index ?? currentIndex;
+  };
+
+  const firstPick = pickOnce();
+
+  if (firstPick === currentIndex) {
+    return pickOnce();
+  }
+
+  return firstPick;
 }
 
 export function OverlayRenderer({ streamer, preview = false }: Props) {
   const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const [phase, setPhase] = useState<TransitionPhase>("idle");
+  const [qrMatrix, setQrMatrix] = useState<{
+    size: number;
+    data: boolean[];
+  } | null>(null);
+
   const links = streamer.links;
+  const link = links[index] ?? null;
+
+  const effectiveSettings = useMemo(
+    () => ({
+      ...streamer.settings,
+      ...(link?.overlay ?? {}),
+    }),
+    [streamer.settings, link],
+  );
 
   useEffect(() => {
     setIndex(0);
+    setPhase("idle");
   }, [streamer.handle, links.length]);
 
   useEffect(() => {
-    if (links.length <= 1) return;
+    if (!link?.qr_enabled) {
+      setQrMatrix(null);
+      return;
+    }
 
-    let fadeTimer: number | undefined;
-    const interval = Math.max(streamer.settings.rotation_seconds, 3) * 1000;
+    try {
+      const qr = QRCode.create(`https://nuphub.com/${link.slug}`, {
+        errorCorrectionLevel: "M",
+      });
 
-    const timer = window.setInterval(() => {
-      setVisible(false);
+      setQrMatrix({
+        size: qr.modules.size,
+        data: Array.from(qr.modules.data, Boolean),
+      });
+    } catch {
+      setQrMatrix(null);
+    }
+  }, [link?.slug, link?.qr_enabled]);
 
-      fadeTimer = window.setTimeout(() => {
-        setIndex((current) => (current + 1) % links.length);
-        setVisible(true);
-      }, 320);
-    }, interval);
+  useEffect(() => {
+    if (!link || links.length <= 1) return;
+
+    let swapTimer: number | undefined;
+    let settleTimer: number | undefined;
+
+    const seconds =
+      link.duration_seconds ??
+      streamer.settings.rotation_seconds;
+
+    const timer = window.setTimeout(() => {
+      setPhase("exit");
+
+      swapTimer = window.setTimeout(() => {
+        setIndex((current) =>
+          chooseWeightedNext(links, current),
+        );
+        setPhase("enter");
+
+        settleTimer = window.setTimeout(() => {
+          setPhase("idle");
+        }, 520);
+      }, 420);
+    }, Math.max(seconds, 3) * 1000);
 
     return () => {
-      window.clearInterval(timer);
-      if (fadeTimer) window.clearTimeout(fadeTimer);
+      window.clearTimeout(timer);
+      if (swapTimer) window.clearTimeout(swapTimer);
+      if (settleTimer) window.clearTimeout(settleTimer);
     };
-  }, [links.length, streamer.settings.rotation_seconds]);
+  }, [
+    index,
+    link,
+    links,
+    streamer.settings.rotation_seconds,
+  ]);
 
-  const link = links[index] ?? null;
+  const qrEnabled = Boolean(link?.qr_enabled);
 
   const label = useMemo(
-    () => truncate(link?.label ?? "", 24),
-    [link?.label],
+    () => truncate(link?.label ?? "", qrEnabled ? 18 : 24),
+    [link?.label, qrEnabled],
   );
 
   const url = useMemo(
-    () => truncate(link ? `nuphub.com/${link.slug}` : "", 38),
-    [link],
+    () =>
+      truncate(
+        link ? `nuphub.com/${link.slug}` : "",
+        qrEnabled ? 27 : 38,
+      ),
+    [link, qrEnabled],
   );
 
   if (!link) {
@@ -70,62 +195,132 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
       <div className="nh-svg-wrap nh-svg-preview">
         <svg
           className="nh-svg-overlay"
-          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
           width="100%"
           height="100%"
         >
-          <rect
-            x="8"
-            y="14"
-            width="504"
-            height="76"
-            rx="10"
-            fill="#0b090e"
-            stroke="#43384f"
-            strokeDasharray="6 5"
-          />
-          <text
-            x="28"
-            y="58"
-            fill="#766e80"
-            fontSize="13"
-            fontWeight="700"
-            fontFamily='Inter, "Segoe UI", Arial, sans-serif'
-          >
-            Enable a link to preview your overlay.
-          </text>
+          <g transform={`translate(${OFFSET_X} ${OFFSET_Y})`}>
+            <rect
+              x="8"
+              y="14"
+              width="504"
+              height="76"
+              rx="10"
+              fill="#0b090e"
+              stroke="#43384f"
+              strokeDasharray="6 5"
+            />
+            <text
+              x="28"
+              y="58"
+              fill="#766e80"
+              fontSize="13"
+              fontWeight="700"
+              fontFamily='Inter, "Segoe UI", Arial, sans-serif'
+            >
+              Enable a link to preview your overlay.
+            </text>
+          </g>
         </svg>
       </div>
     );
   }
 
-  const accent = streamer.settings.accent_color || "#8b5cf6";
-  const background = streamer.settings.background_color || "#0a080e";
-  const textColor = streamer.settings.text_color || "#ffffff";
-  const style = streamer.settings.style;
-  const backgroundOpacity = clampOpacity(streamer.settings.background_opacity);
-  const accentBarSide = streamer.settings.accent_bar_side ?? "left";
-  const textAlign = streamer.settings.text_align ?? "left";
+  const settings = effectiveSettings;
+  const accent = settings.accent_color || "#8b5cf6";
+  const background = settings.background_color || "#0a080e";
+  const textColor = settings.text_color || "#ffffff";
+  const style = settings.style;
+  const backgroundOpacity = clamp(settings.background_opacity, 0, 1, 0.94);
+  const accentBarSide = settings.accent_bar_side ?? "left";
+  const textAlign = settings.text_align ?? "left";
+  const fontFamily = fontStacks[settings.font_family ?? "inter"];
+  const textEffect = settings.text_effect ?? "none";
+  const textAnimation = settings.text_animation ?? "none";
+  const transitionEffect = settings.transition_effect ?? "fade";
+  const fontScale = clamp(settings.font_scale, 0.8, 1.25, 1);
+  const animationDuration = clamp(settings.animation_speed, 0.4, 4, 1.6);
+  const neonDuration = clamp(settings.neon_speed, 0.35, 4, 1.8);
+  const neonIntensity = clamp(settings.neon_intensity, 0.25, 2.5, 1);
+  const neonPrimary = settings.neon_primary_color || accent;
+  const neonSecondary = settings.neon_secondary_color || "#22d3ee";
 
   const showPanel = style !== "minimal";
-  const textAnchor = textAlign === "right" ? "end" : "start";
-  const textX = textAlign === "right" ? 492 : 28;
-  const labelY = streamer.settings.show_url ? 40 : 60;
-  const urlY = streamer.settings.show_label ? 70 : 62;
 
-  const accentRectX = accentBarSide === "right" ? 504 : 8;
-  const accentRectY = showPanel ? 10 : 18;
-  const accentRectH = showPanel ? 84 : 68;
+  const textAreaLeft = 28;
+  const textAreaRight = qrEnabled ? 398 : 492;
+  const textAreaCenter = (textAreaLeft + textAreaRight) / 2;
+
+  const textAnchor =
+    textAlign === "center"
+      ? "middle"
+      : textAlign === "right"
+        ? "end"
+        : "start";
+
+  const textX =
+    textAlign === "center"
+      ? textAreaCenter
+      : textAlign === "right"
+        ? textAreaRight
+        : textAreaLeft;
+
+  const labelY = settings.show_url ? (qrEnabled ? 38 : 40) : 60;
+  const urlY = settings.show_label ? (qrEnabled ? 66 : 70) : 62;
+
+  const labelFontSize = (qrEnabled ? 9.5 : 12) * fontScale;
+  const urlFontSize = (qrEnabled ? 17 : 25) * fontScale;
+  const labelLetterSpacing = qrEnabled ? 0.7 : 1.2;
+  const urlLetterSpacing = qrEnabled ? -0.25 : -0.5;
+
+  const staticFilter =
+    textEffect === "shadow"
+      ? "url(#nhTextShadow)"
+      : textEffect === "glow"
+        ? "url(#nhTextGlow)"
+        : undefined;
+
+  const outlineProps =
+    textEffect === "outline"
+      ? {
+          stroke: accent,
+          strokeWidth: 1.5,
+          paintOrder: "stroke" as const,
+        }
+      : {};
+
+  const motionClass = `nh-text-animation-${textAnimation}`;
+  const neonClass =
+    textEffect === "neon" ? "nh-text-effect-neon" : "";
+
+  const effectStyle = {
+    "--nh-animation-speed": `${animationDuration}s`,
+    "--nh-neon-speed": `${neonDuration}s`,
+    "--nh-neon-intensity": neonIntensity,
+    "--nh-neon-primary": neonPrimary,
+    "--nh-neon-secondary": neonSecondary,
+  } as CSSProperties;
+
+  const wrapClass = [
+    "nh-svg-wrap",
+    preview ? "nh-svg-preview" : "",
+    `nh-transition-${transitionEffect}`,
+    `nh-phase-${phase}`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const leftAccentPath =
+    "M 18 10 Q 8 10 8 20 L 8 84 Q 8 94 18 94";
+
+  const rightAccentPath =
+    "M 502 10 Q 512 10 512 20 L 512 84 Q 512 94 502 94";
 
   return (
-    <div
-      className={`nh-svg-wrap${preview ? " nh-svg-preview" : ""}${
-        visible ? "" : " nh-svg-fading"
-      }`}
-    >
+    <div className={wrapClass}>
       <svg
         className="nh-svg-overlay"
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
         width="100%"
         height="100%"
         role="img"
@@ -138,7 +333,13 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
-          <filter id="nhShadow" x="-20%" y="-40%" width="140%" height="180%">
+          <filter
+            id="nhShadow"
+            x="-25%"
+            y="-60%"
+            width="150%"
+            height="220%"
+          >
             <feDropShadow
               dx="0"
               dy="6"
@@ -147,76 +348,185 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
               floodOpacity=".28"
             />
           </filter>
+
+          <filter
+            id="nhTextShadow"
+            x="-40%"
+            y="-80%"
+            width="180%"
+            height="260%"
+          >
+            <feDropShadow
+              dx="2"
+              dy="3"
+              stdDeviation="2.5"
+              floodColor="#000000"
+              floodOpacity=".72"
+            />
+          </filter>
+
+          <filter
+            id="nhTextGlow"
+            x="-70%"
+            y="-140%"
+            width="240%"
+            height="380%"
+          >
+            <feDropShadow
+              dx="0"
+              dy="0"
+              stdDeviation="2.5"
+              floodColor={accent}
+              floodOpacity=".95"
+            />
+            <feDropShadow
+              dx="0"
+              dy="0"
+              stdDeviation="6"
+              floodColor={accent}
+              floodOpacity=".58"
+            />
+          </filter>
         </defs>
 
-        {showPanel && (
-          <g filter="url(#nhShadow)">
-            <rect
-              x="8"
-              y="10"
-              width="504"
-              height="84"
-              rx="10"
-              fill={background}
-              fillOpacity={backgroundOpacity}
-              stroke="rgba(255,255,255,.13)"
-            />
-
-            {style === "glass" && (
+        <g transform={`translate(${OFFSET_X} ${OFFSET_Y})`}>
+          {showPanel && (
+            <g filter="url(#nhShadow)">
               <rect
-                x="9"
-                y="11"
-                width="502"
-                height="82"
-                rx="9"
-                fill="url(#nhGlass)"
-                opacity={Math.min(0.34, backgroundOpacity * 0.34)}
+                x="8"
+                y="10"
+                width="504"
+                height="84"
+                rx="10"
+                fill={background}
+                fillOpacity={backgroundOpacity}
+                stroke="rgba(255,255,255,.13)"
               />
-            )}
+
+              {style === "glass" && (
+                <rect
+                  x="9"
+                  y="11"
+                  width="502"
+                  height="82"
+                  rx="9"
+                  fill="url(#nhGlass)"
+                  opacity={Math.min(0.34, backgroundOpacity * 0.34)}
+                />
+              )}
+            </g>
+          )}
+
+          {accentBarSide === "left" && (
+            <path
+              d={leftAccentPath}
+              fill="none"
+              stroke={accent}
+              strokeWidth="5"
+              strokeLinecap="round"
+            />
+          )}
+
+          {accentBarSide === "right" && (
+            <path
+              d={rightAccentPath}
+              fill="none"
+              stroke={accent}
+              strokeWidth="5"
+              strokeLinecap="round"
+            />
+          )}
+
+          <g
+            className={`nh-text-motion ${motionClass}`}
+            style={effectStyle}
+          >
+            <g className={`nh-text-visual ${neonClass}`}>
+              {settings.show_label && (
+                <text
+                  x={textX}
+                  y={labelY}
+                  fill={textColor}
+                  fillOpacity=".72"
+                  fontSize={labelFontSize}
+                  fontWeight="900"
+                  letterSpacing={labelLetterSpacing}
+                  fontFamily={fontFamily}
+                  textAnchor={textAnchor}
+                  filter={staticFilter}
+                  {...outlineProps}
+                >
+                  {label.toUpperCase()}
+                </text>
+              )}
+
+              {settings.show_url && (
+                <text
+                  x={textX}
+                  y={urlY}
+                  fill={textColor}
+                  fontSize={urlFontSize}
+                  fontWeight="800"
+                  letterSpacing={urlLetterSpacing}
+                  fontFamily={fontFamily}
+                  textAnchor={textAnchor}
+                  filter={staticFilter}
+                  {...outlineProps}
+                >
+                  {url}
+                </text>
+              )}
+            </g>
           </g>
-        )}
 
-        {accentBarSide !== "none" && (
-          <rect
-            x={accentRectX}
-            y={accentRectY}
-            width="4"
-            height={accentRectH}
-            rx="2"
-            fill={accent}
-          />
-        )}
+          {qrEnabled && qrMatrix && (
+            <g className="nh-qr-tile">
+              {(() => {
+                const tileX = 424;
+                const tileY = 16;
+                const tileSize = 72;
+                const quiet = 4;
+                const totalModules = qrMatrix.size + quiet * 2;
+                const moduleSize = tileSize / totalModules;
 
-        {streamer.settings.show_label && (
-          <text
-            x={textX}
-            y={labelY}
-            fill={textColor}
-            fillOpacity=".72"
-            fontSize="12"
-            fontWeight="900"
-            letterSpacing="1.2"
-            fontFamily='Inter, "Segoe UI", Arial, sans-serif'
-            textAnchor={textAnchor}
-          >
-            {label.toUpperCase()}
-          </text>
-        )}
+                return (
+                  <>
+                    <rect
+                      x={tileX}
+                      y={tileY}
+                      width={tileSize}
+                      height={tileSize}
+                      rx="7"
+                      fill="#ffffff"
+                    />
 
-        {streamer.settings.show_url && (
-          <text
-            x={textX}
-            y={urlY}
-            fill={textColor}
-            fontSize="25"
-            fontWeight="800"
-            letterSpacing="-0.5"
-            fontFamily='Inter, "Segoe UI", Arial, sans-serif'
-            textAnchor={textAnchor}
-          >
-            {url}
-          </text>
-        )}
+                    <g shapeRendering="crispEdges">
+                      {qrMatrix.data.map((filled, moduleIndex) => {
+                        if (!filled) return null;
+
+                        const row = Math.floor(
+                          moduleIndex / qrMatrix.size,
+                        );
+                        const col = moduleIndex % qrMatrix.size;
+
+                        return (
+                          <rect
+                            key={moduleIndex}
+                            x={tileX + (col + quiet) * moduleSize}
+                            y={tileY + (row + quiet) * moduleSize}
+                            width={moduleSize}
+                            height={moduleSize}
+                            fill="#000000"
+                          />
+                        );
+                      })}
+                    </g>
+                  </>
+                );
+              })()}
+            </g>
+          )}
+        </g>
       </svg>
     </div>
   );

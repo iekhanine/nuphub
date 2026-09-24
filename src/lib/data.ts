@@ -3,23 +3,42 @@ import type {
   AdminRole,
   AdminUser,
   Entitlement,
+  OverlayPreset,
+  OverlayPresetConfig,
+  OverlaySequenceItem,
   OverlaySettings,
   PlanId,
   Profile,
+  PublicAllLinksOverlay,
   PublicStreamer,
   StreamLink,
 } from "../types";
 
 async function currentUserId() {
+  /*
+   * The dashboard route guard already relies on Supabase's persisted
+   * session. Use that same source here instead of getUser().
+   *
+   * getUser() performs a server-backed user lookup and can throw
+   * AuthSessionMissingError during auth hydration / HMR even while the
+   * persisted browser session is being restored. When every dashboard
+   * data function calls it at once, one timing race can make the whole
+   * application appear signed out.
+   */
   const {
-    data: { user },
+    data: { session },
     error,
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getSession();
 
   if (error) throw error;
-  if (!user) throw new Error("You are not signed in.");
 
-  return user.id;
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("AUTH_SESSION_MISSING");
+  }
+
+  return userId;
 }
 
 export async function getMyProfile() {
@@ -178,6 +197,16 @@ export async function saveOverlaySettings(
       | "background_opacity"
       | "accent_bar_side"
       | "text_align"
+      | "font_family"
+      | "text_effect"
+      | "text_animation"
+      | "transition_effect"
+      | "animation_speed"
+      | "neon_primary_color"
+      | "neon_secondary_color"
+      | "neon_intensity"
+      | "neon_speed"
+      | "font_scale"
       | "show_label"
       | "show_url"
     >
@@ -194,6 +223,75 @@ export async function saveOverlaySettings(
 
   if (error) throw error;
   return data as OverlaySettings;
+}
+
+
+export async function getOverlayPresets() {
+  const userId = await currentUserId();
+
+  const { data, error } = await supabase
+    .from("nuphub_overlay_presets")
+    .select("*")
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as OverlayPreset[];
+}
+
+export async function saveOverlayPreset(input: {
+  id?: string | null;
+  name: string;
+  config: OverlayPresetConfig;
+}) {
+  const { data, error } = await supabase.rpc("nuphub_save_overlay_preset", {
+    p_preset_id: input.id ?? null,
+    p_name: input.name,
+    p_config: input.config,
+  });
+
+  if (error) throw error;
+  return data as OverlayPreset;
+}
+
+export async function deleteOverlayPreset(id: string) {
+  const { error } = await supabase.rpc("nuphub_delete_overlay_preset", {
+    p_preset_id: id,
+  });
+
+  if (error) throw error;
+}
+
+export async function getOverlaySequence() {
+  const userId = await currentUserId();
+
+  const { data, error } = await supabase
+    .from("nuphub_overlay_sequence")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  return (data ?? []) as OverlaySequenceItem[];
+}
+
+export async function setOverlaySequenceItem(
+  linkId: string,
+  input: {
+    presetId: string | null;
+    durationSeconds: number | null;
+    weight: number;
+    qrEnabled: boolean;
+  },
+) {
+  const { error } = await supabase.rpc("nuphub_set_overlay_sequence_item", {
+    p_link_id: linkId,
+    p_preset_id: input.presetId,
+    p_duration_seconds: input.durationSeconds,
+    p_weight: input.weight,
+    p_qr_enabled: input.qrEnabled,
+  });
+
+  if (error) throw error;
 }
 
 export async function updateProfile(changes: {
@@ -219,6 +317,51 @@ export async function handleAvailable(handle: string) {
 
   if (error) throw error;
   return Boolean(data);
+}
+
+
+export async function customSlugAvailable(
+  slug: string,
+  linkId?: string | null,
+) {
+  const { data, error } = await supabase.rpc(
+    "nuphub_custom_slug_available",
+    {
+      p_slug: slug,
+      p_link_id: linkId ?? null,
+    },
+  );
+
+  if (error) throw error;
+  return Boolean(data);
+}
+
+export async function setCustomLinkSlug(
+  linkId: string,
+  slug: string | null,
+) {
+  const { data, error } = await supabase.rpc(
+    "nuphub_set_custom_link_slug",
+    {
+      p_link_id: linkId,
+      p_slug: slug,
+    },
+  );
+
+  if (error) throw error;
+  return data as StreamLink;
+}
+
+export async function getPublicAllLinksOverlay(handle: string) {
+  const { data, error } = await supabase.rpc(
+    "nuphub_public_all_links_overlay",
+    {
+      p_handle: handle,
+    },
+  );
+
+  if (error) throw error;
+  return (data ?? null) as PublicAllLinksOverlay | null;
 }
 
 export async function getPublicStreamer(handle: string) {

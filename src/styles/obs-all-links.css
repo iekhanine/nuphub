@@ -1,0 +1,182 @@
+html.nh-obs-all-links-route,
+body.nh-obs-all-links-route,
+body.nh-obs-all-links-route #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.nh-all-page {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  place-items: center;
+  padding: 28px;
+  box-sizing: border-box;
+  background: transparent;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.nh-all-board {
+  width: min(900px, 100%);
+  max-height: 100%;
+  padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--nh-all-accent) 38%, transparent);
+  border-radius: 20px;
+  box-sizing: border-box;
+  color: var(--nh-all-text);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--nh-all-accent) 10%, transparent),
+      transparent 35%
+    ),
+    color-mix(in srgb, var(--nh-all-background) 94%, transparent);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, .35),
+    0 0 40px color-mix(in srgb, var(--nh-all-accent) 18%, transparent);
+}
+
+.nh-all-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,.09);
+}
+
+.nh-all-header span {
+  color: var(--nh-all-accent);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.nh-all-header strong {
+  overflow: hidden;
+  font-size: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nh-all-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.nh-all-link {
+  display: grid;
+  min-height: 76px;
+  align-items: center;
+  padding: 13px 16px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-left: 4px solid var(--nh-all-accent);
+  border-radius: 12px;
+  background: rgba(0,0,0,.24);
+}
+
+.nh-all-link.with-qr {
+  grid-template-columns: minmax(0, 1fr) 68px;
+  gap: 12px;
+}
+
+.nh-all-link-copy {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.nh-all-link-copy strong {
+  overflow: hidden;
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nh-all-link-copy span {
+  overflow: hidden;
+  color: var(--nh-all-text);
+  opacity: .86;
+  font-size: 18px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nh-all-qr {
+  display: block;
+  width: 64px;
+  height: 64px;
+  filter: none;
+  shape-rendering: crispEdges;
+}
+
+.nh-all-board.compact {
+  padding: 18px;
+}
+
+.nh-all-board.compact .nh-all-grid {
+  gap: 8px;
+}
+
+.nh-all-board.compact .nh-all-link {
+  min-height: 64px;
+  padding: 9px 12px;
+}
+
+.nh-all-board.compact .nh-all-link-copy strong {
+  font-size: 13px;
+}
+
+.nh-all-board.compact .nh-all-link-copy span {
+  font-size: 15px;
+}
+
+.nh-all-board.dense {
+  padding: 14px;
+}
+
+.nh-all-board.dense .nh-all-header {
+  margin-bottom: 10px;
+  padding-bottom: 9px;
+}
+
+.nh-all-board.dense .nh-all-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.nh-all-board.dense .nh-all-link {
+  min-height: 52px;
+  padding: 7px 9px;
+}
+
+.nh-all-board.dense .nh-all-link.with-qr {
+  grid-template-columns: minmax(0, 1fr) 48px;
+  gap: 6px;
+}
+
+.nh-all-board.dense .nh-all-link-copy strong {
+  font-size: 11px;
+}
+
+.nh-all-board.dense .nh-all-link-copy span {
+  font-size: 12px;
+}
+
+.nh-all-board.dense .nh-all-qr {
+  width: 46px;
+  height: 46px;
+}
+
+@media (max-width: 700px) {
+  .nh-all-grid,
+  .nh-all-board.dense .nh-all-grid {
+    grid-template-columns: 1fr;
+  }
+}

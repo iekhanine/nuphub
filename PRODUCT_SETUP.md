@@ -5,8 +5,8 @@ WHAT THIS BUILD ADDS
 - Links moved to /dashboard/links.
 - Public /pricing page.
 - Dashboard /dashboard/billing page.
-- Free / Pro Lifetime / Creator Lifetime tiers.
-- Existing NupHub profiles are grandfathered into Creator Lifetime.
+- Free / Pro  / Creator  tiers.
+- Existing NupHub profiles are grandfathered into Creator .
 - New profiles default to Free.
 - Free link limit is enforced server-side at 5 links.
 - Square hosted checkout for Pro ($29 one time) and Creator ($69 one time).
@@ -52,7 +52,7 @@ IMPORTANT
 - SUPABASE_SERVICE_ROLE_KEY and SQUARE_ACCESS_TOKEN are server-only secrets.
 - Never put either into a VITE_ environment variable.
 - The webhook verifies Square's x-square-hmacsha256-signature.
-- Existing beta profiles are intentionally Creator Lifetime so current testing
+- Existing beta profiles are intentionally Creator  so current testing
   does not suddenly lock features.
 
 TIER MODEL
@@ -64,13 +64,13 @@ Free
 - basic overlay functionality
 - public profile
 
-Pro Lifetime
+Pro 
 - $29 once
 - unlimited links
 - full overlay builder
-- lifetime access
+-  access
 
-Creator Lifetime
+Creator 
 - $69 once
 - everything in Pro
 - entitlement for Creator-level features as they ship

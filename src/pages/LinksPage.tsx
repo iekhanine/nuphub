@@ -19,9 +19,10 @@ import {
   getMyEntitlement,
   getMyLinks,
   getMyProfile,
+  setCustomLinkSlug,
   updateLink,
 } from "../lib/data";
-import { PLANS } from "../lib/plans";
+import { hasPlan, PLANS } from "../lib/plans";
 import type { Entitlement, Profile, StreamLink } from "../types";
 
 
@@ -78,16 +79,39 @@ export default function LinksPage() {
     label: string;
     destination_url: string;
     sort_order: number;
+    custom_slug: string | null;
   }) {
+    const coreValues = {
+      label: values.label,
+      destination_url: values.destination_url,
+      sort_order: values.sort_order,
+    };
+
     if (editing) {
-      const updated = await updateLink(editing.id, values);
+      let updated = await updateLink(editing.id, coreValues);
+
+      if (values.custom_slug !== editing.custom_slug) {
+        updated = await setCustomLinkSlug(
+          editing.id,
+          values.custom_slug,
+        );
+      }
+
       setLinks((items) =>
         items.map((item) => (item.id === updated.id ? updated : item)),
       );
       return;
     }
 
-    const created = await createLink(values);
+    let created = await createLink(coreValues);
+
+    if (values.custom_slug) {
+      created = await setCustomLinkSlug(
+        created.id,
+        values.custom_slug,
+      );
+    }
+
     setLinks((items) => [...items, created]);
   }
 
@@ -253,12 +277,14 @@ export default function LinksPage() {
                     className="link-copy-button"
                     onClick={() =>
                       void copy(
-                        `${window.location.origin}/${item.slug}`,
+                        `${window.location.origin}/${
+                          item.custom_slug || item.slug
+                        }`,
                         item.id,
                       )
                     }
                   >
-                    nuphub.com/{item.slug}
+                    nuphub.com/{item.custom_slug || item.slug}
                     <Copy size={12} />
                   </button>
 
@@ -304,6 +330,7 @@ export default function LinksPage() {
       <LinkEditorModal
         open={modalOpen}
         link={editing}
+        creator={hasPlan(plan, "creator")}
         defaultSortOrder={
           links.length === 0
             ? 100

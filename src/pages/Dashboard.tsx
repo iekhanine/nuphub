@@ -215,7 +215,7 @@ export default function Dashboard() {
             <Link className="upgrade-strip" to="/dashboard/billing">
               <span>
                 <strong>Unlock unlimited links + full overlay controls</strong>
-                <small>Pro Lifetime is a one-time $29 purchase.</small>
+                <small>Pro  is a one-time $29 purchase.</small>
               </span>
               <ArrowRight size={17} />
             </Link>

@@ -3,17 +3,20 @@ import { X } from "lucide-react";
 
 import type { StreamLink } from "../types";
 import { validHttpUrl } from "../lib/validation";
+import { customSlugAvailable } from "../lib/data";
 import "../styles/link-editor.css";
 
 type Props = {
   open: boolean;
   link?: StreamLink | null;
   defaultSortOrder: number;
+  creator: boolean;
   onClose: () => void;
   onSave: (values: {
     label: string;
     destination_url: string;
     sort_order: number;
+    custom_slug: string | null;
   }) => Promise<void>;
 };
 
@@ -36,11 +39,16 @@ export function LinkEditorModal({
   open,
   link,
   defaultSortOrder,
+  creator,
   onClose,
   onSave,
 }: Props) {
   const [label, setLabel] = useState("");
   const [destination, setDestination] = useState("");
+  const [customSlug, setCustomSlug] = useState("");
+  const [slugState, setSlugState] = useState<
+    "idle" | "checking" | "available" | "taken"
+  >("idle");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -49,10 +57,47 @@ export function LinkEditorModal({
 
     setLabel(link?.label ?? "");
     setDestination(link?.destination_url ?? "");
+    setCustomSlug(link?.custom_slug ?? "");
+    setSlugState("idle");
     setError("");
   }, [open, link]);
 
   if (!open) return null;
+
+
+  async function checkSlug(value = customSlug) {
+    const clean = value.trim().toLowerCase();
+
+    if (!clean) {
+      setSlugState("idle");
+      return true;
+    }
+
+    if (!/^[a-z0-9][a-z0-9-]{2,39}$/.test(clean)) {
+      setSlugState("taken");
+      return false;
+    }
+
+    if (!creator) {
+      setSlugState("idle");
+      return true;
+    }
+
+    setSlugState("checking");
+
+    try {
+      const available = await customSlugAvailable(
+        clean,
+        link?.id ?? null,
+      );
+
+      setSlugState(available ? "available" : "taken");
+      return available;
+    } catch {
+      setSlugState("idle");
+      return false;
+    }
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -60,6 +105,7 @@ export function LinkEditorModal({
 
     const cleanLabel = label.trim();
     const cleanDestination = destination.trim();
+    const cleanCustomSlug = customSlug.trim().toLowerCase();
 
     if (!cleanLabel) {
       setError("Enter a name for this link.");
@@ -76,6 +122,32 @@ export function LinkEditorModal({
       return;
     }
 
+    if (
+      cleanCustomSlug &&
+      !/^[a-z0-9][a-z0-9-]{2,39}$/.test(cleanCustomSlug)
+    ) {
+      setError(
+        "Custom URLs must be 3–40 characters using lowercase letters, numbers, and hyphens.",
+      );
+      return;
+    }
+
+    if (cleanCustomSlug && !creator) {
+      setError(
+        "Please upgrade your plan to Creator to use custom NupHub URLs.",
+      );
+      return;
+    }
+
+    if (cleanCustomSlug) {
+      const available = await checkSlug(cleanCustomSlug);
+
+      if (!available) {
+        setError("That NupHub URL is already in use or reserved.");
+        return;
+      }
+    }
+
     setSaving(true);
 
     try {
@@ -83,6 +155,7 @@ export function LinkEditorModal({
         label: cleanLabel,
         destination_url: cleanDestination,
         sort_order: link?.sort_order ?? defaultSortOrder,
+        custom_slug: cleanCustomSlug || null,
       });
 
       onClose();
@@ -148,11 +221,57 @@ export function LinkEditorModal({
             />
           </div>
 
+          <div className="nh-link-field nh-custom-url-field">
+            <div className="nh-link-field-head">
+              <label htmlFor="nh-link-custom-slug">
+                Custom NupHub URL
+                <span className="nh-creator-mini-badge">CREATOR</span>
+              </label>
+              {slugState === "checking" && <span>Checking…</span>}
+              {slugState === "available" && (
+                <span className="nh-slug-available">Available</span>
+              )}
+              {slugState === "taken" && (
+                <span className="nh-slug-taken">Unavailable</span>
+              )}
+            </div>
+
+            <div className="nh-custom-slug-input">
+              <span>nuphub.com/</span>
+              <input
+                id="nh-link-custom-slug"
+                value={customSlug}
+                onChange={(event) => {
+                  const value = event.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]/g, "")
+                    .slice(0, 40);
+
+                  setCustomSlug(value);
+                  setSlugState("idle");
+                }}
+                onBlur={() => void checkSlug()}
+                placeholder="my-youtube"
+                maxLength={40}
+                autoCapitalize="none"
+                spellCheck={false}
+              />
+            </div>
+
+            <small>
+              {creator
+                ? "Choose a memorable Creator URL. Leave blank to keep the generated short URL."
+                : "Preview the field now. Creator Lifetime is required to claim a custom URL."}
+            </small>
+          </div>
+
           <div className="nh-link-generated">
             {link ? (
               <>
                 <span>Short URL</span>
-                <strong>nuphub.com/{link.slug}</strong>
+                <strong>
+                  nuphub.com/{customSlug || link.custom_slug || link.slug}
+                </strong>
               </>
             ) : (
               <span>

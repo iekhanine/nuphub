@@ -10,6 +10,7 @@ export type StreamLink = {
   user_id: string;
   label: string;
   slug: string;
+  custom_slug: string | null;
   destination_url: string;
   enabled: boolean;
   sort_order: number;
@@ -28,7 +29,42 @@ export type OverlayPosition =
 
 export type OverlayStyle = "glass" | "solid" | "minimal";
 export type OverlayAccentBarSide = "left" | "right" | "none";
-export type OverlayTextAlign = "left" | "right";
+export type OverlayTextAlign = "left" | "center" | "right";
+export type OverlayFontFamily =
+  | "inter"
+  | "arial"
+  | "verdana"
+  | "trebuchet"
+  | "georgia"
+  | "impact"
+  | "courier";
+
+export type OverlayTextEffect =
+  | "none"
+  | "shadow"
+  | "glow"
+  | "outline"
+  | "neon";
+
+export type OverlayTextAnimation =
+  | "none"
+  | "pulse"
+  | "zoom"
+  | "spin"
+  | "wobble"
+  | "bounce"
+  | "flash"
+  | "float"
+  | "shake";
+
+export type OverlayTransitionEffect =
+  | "fade"
+  | "explode"
+  | "implode"
+  | "slide-left"
+  | "slide-right"
+  | "flip"
+  | "pop";
 
 export type PlanId = "free" | "pro" | "creator";
 export type AdminRole = "admin" | "owner";
@@ -60,14 +96,71 @@ export type OverlaySettings = {
   background_opacity: number;
   accent_bar_side: OverlayAccentBarSide;
   text_align: OverlayTextAlign;
+  font_family: OverlayFontFamily;
+  text_effect: OverlayTextEffect;
+  text_animation: OverlayTextAnimation;
+  transition_effect: OverlayTransitionEffect;
+  animation_speed: number;
+  neon_primary_color: string;
+  neon_secondary_color: string;
+  neon_intensity: number;
+  neon_speed: number;
+  font_scale: number;
   show_label: boolean;
   show_url: boolean;
+  updated_at: string;
+};
+
+export type OverlayPresetConfig = Pick<
+  OverlaySettings,
+  | "accent_color"
+  | "background_color"
+  | "text_color"
+  | "style"
+  | "background_opacity"
+  | "accent_bar_side"
+  | "text_align"
+  | "font_family"
+  | "text_effect"
+  | "text_animation"
+  | "transition_effect"
+  | "animation_speed"
+  | "neon_primary_color"
+  | "neon_secondary_color"
+  | "neon_intensity"
+  | "neon_speed"
+  | "font_scale"
+  | "show_label"
+  | "show_url"
+>;
+
+export type OverlayPreset = {
+  id: string;
+  user_id: string;
+  name: string;
+  config: OverlayPresetConfig;
+  created_at: string;
+  updated_at: string;
+};
+
+export type OverlaySequenceItem = {
+  user_id: string;
+  link_id: string;
+  preset_id: string | null;
+  duration_seconds: number | null;
+  weight: number;
+  qr_enabled: boolean;
+  created_at: string;
   updated_at: string;
 };
 
 export type PublicOverlayLink = {
   label: string;
   slug: string;
+  overlay?: Partial<OverlayPresetConfig> | null;
+  duration_seconds?: number | null;
+  weight?: number;
+  qr_enabled?: boolean;
 };
 
 export type PublicStreamer = {
@@ -83,6 +176,16 @@ export type PublicStreamer = {
     background_opacity: number;
     accent_bar_side: OverlayAccentBarSide;
     text_align: OverlayTextAlign;
+    font_family: OverlayFontFamily;
+    text_effect: OverlayTextEffect;
+    text_animation: OverlayTextAnimation;
+    transition_effect: OverlayTransitionEffect;
+    animation_speed: number;
+    neon_primary_color: string;
+    neon_secondary_color: string;
+    neon_intensity: number;
+    neon_speed: number;
+    font_scale: number;
     show_label: boolean;
     show_url: boolean;
   };
@@ -103,4 +206,18 @@ export type AdminUser = {
   enrolled: boolean;
   nuphub_role: NupHubRole;
   otl_role: OtlRole;
+};
+
+
+export type PublicAllLinksOverlay = {
+  handle: string;
+  display_name: string | null;
+  accent_color: string;
+  background_color: string;
+  text_color: string;
+  links: Array<{
+    label: string;
+    slug: string;
+    qr_enabled: boolean;
+  }>;
 };

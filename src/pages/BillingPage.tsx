@@ -135,8 +135,11 @@ export default function BillingPage() {
 
       <div className="square-note">
         <ExternalLink size={15} />
-        Checkout opens on Square’s secure hosted payment page.
+        Checkout opens on Square’s secure hosted payment page. Your payment information is handled directly by Square and never touches our servers.
+      <br />
+        * Lifetime access to your purchased tier refers to the duration of the product or service as offered by NupHub.
       </div>
+
     </DashboardShell>
   );
 }

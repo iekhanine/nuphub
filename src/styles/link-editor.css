@@ -172,3 +172,53 @@
 .nh-link-button-primary:hover:not(:disabled) {
   background: #8257ff;
 }
+
+
+.nh-custom-url-field {
+  padding-top: 2px;
+}
+
+.nh-creator-mini-badge {
+  display: inline-flex;
+  margin-left: 7px;
+  padding: 2px 6px;
+  border: 1px solid #6d4b32;
+  border-radius: 999px;
+  color: #f0c38e;
+  background: #23170f;
+  font-size: 8px;
+  font-weight: 900;
+  vertical-align: middle;
+}
+
+.nh-custom-slug-input {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  min-height: 38px;
+  border: 1px solid #342d3b;
+  border-radius: 8px;
+  background: #0b090e;
+  overflow: hidden;
+}
+
+.nh-custom-slug-input > span {
+  padding-left: 10px;
+  color: #8e8496;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.nh-custom-slug-input input {
+  min-width: 0;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.nh-slug-available {
+  color: #8ed3a1 !important;
+}
+
+.nh-slug-taken {
+  color: #e99a9a !important;
+}

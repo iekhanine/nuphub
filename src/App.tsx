@@ -10,9 +10,11 @@ import SetupPage from "./pages/SetupPage";
 import Dashboard from "./pages/Dashboard";
 import LinksPage from "./pages/LinksPage";
 import OverlaySettingsPage from "./pages/OverlaySettingsPage";
+import ObsHowToPage from "./pages/ObsHowToPage";
 import BillingPage from "./pages/BillingPage";
 import AccountPage from "./pages/AccountPage";
 import ObsOverlayPage from "./pages/ObsOverlayPage";
+import ObsAllLinksPage from "./pages/ObsAllLinksPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import RedirectPage from "./pages/RedirectPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
@@ -79,6 +81,16 @@ export default function App() {
         }
       />
 
+
+      <Route
+        path="/dashboard/obs-how-to"
+        element={
+          <NupHubAppRoute>
+            <ObsHowToPage />
+          </NupHubAppRoute>
+        }
+      />
+
       <Route
         path="/dashboard/billing"
         element={
@@ -111,6 +123,10 @@ export default function App() {
         }
       />
 
+      <Route
+        path="/obs/:handle/all"
+        element={<ObsAllLinksPage />}
+      />
       <Route path="/obs/:handle" element={<ObsOverlayPage />} />
       <Route path="/u/:handle" element={<PublicProfilePage />} />
 

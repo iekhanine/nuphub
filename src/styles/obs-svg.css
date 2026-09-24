@@ -1,7 +1,6 @@
 /*
-  NupHub SVG OBS overlay test
-  React controls the data; SVG controls the drawing.
-  Browser source native size: 520 x 104.
+  NupHub SVG OBS overlay
+  Native browser-source size: 520 x 104.
 */
 
 .nh-svg-page {
@@ -18,9 +17,7 @@
   height: 104px;
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  transition:
-    opacity 320ms ease,
-    transform 320ms ease;
+  transform-origin: center;
   pointer-events: none;
 }
 
@@ -29,14 +26,327 @@
   height: 100%;
 }
 
-.nh-svg-fading {
-  opacity: 0;
-  transform: translate3d(0, 3px, 0);
-}
-
 .nh-svg-overlay {
   display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+.nh-text-group {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nh-text-visual {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nh-text-motion {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nh-text-effect-neon {
+  animation: nhNeonColor var(--nh-neon-speed, 1.8s) ease-in-out infinite alternate;
+}
+
+.nh-text-effect-neon text {
+  filter:
+    drop-shadow(
+      0 0 calc(2px * var(--nh-neon-intensity, 1))
+      var(--nh-neon-primary, #8b5cf6)
+    )
+    drop-shadow(
+      0 0 calc(6px * var(--nh-neon-intensity, 1))
+      var(--nh-neon-primary, #8b5cf6)
+    );
+}
+
+@keyframes nhNeonColor {
+  0%,
+  100% {
+    opacity: 1;
+    filter:
+      drop-shadow(
+        0 0 calc(2px * var(--nh-neon-intensity, 1))
+        var(--nh-neon-primary, #8b5cf6)
+      )
+      drop-shadow(
+        0 0 calc(7px * var(--nh-neon-intensity, 1))
+        var(--nh-neon-primary, #8b5cf6)
+      );
+  }
+
+  50% {
+    opacity: .82;
+    filter:
+      drop-shadow(
+        0 0 calc(3px * var(--nh-neon-intensity, 1))
+        var(--nh-neon-secondary, #22d3ee)
+      )
+      drop-shadow(
+        0 0 calc(10px * var(--nh-neon-intensity, 1))
+        var(--nh-neon-secondary, #22d3ee)
+      );
+  }
+}
+
+/* Continuous Creator text motion */
+
+.nh-text-animation-pulse {
+  animation: nhTextPulse var(--nh-animation-speed, 1.6s) ease-in-out infinite;
+}
+
+.nh-text-animation-zoom {
+  animation: nhTextZoom var(--nh-animation-speed, 1.6s) ease-in-out infinite;
+}
+
+.nh-text-animation-spin {
+  animation: nhTextSpin var(--nh-animation-speed, 1.6s) linear infinite;
+}
+
+.nh-text-animation-wobble {
+  animation: nhTextWobble var(--nh-animation-speed, 1.6s) ease-in-out infinite;
+}
+
+.nh-text-animation-bounce {
+  animation: nhTextBounce var(--nh-animation-speed, 1.6s) ease-in-out infinite;
+}
+
+.nh-text-animation-flash {
+  animation: nhTextFlash var(--nh-animation-speed, 1.6s) steps(2, end) infinite;
+}
+
+.nh-text-animation-float {
+  animation: nhTextFloat var(--nh-animation-speed, 1.6s) ease-in-out infinite;
+}
+
+.nh-text-animation-shake {
+  animation: nhTextShake var(--nh-animation-speed, .9s) linear infinite;
+}
+
+@keyframes nhTextPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes nhTextZoom {
+  0%, 100% { transform: scale(.92); }
+  50% { transform: scale(1.12); }
+}
+
+@keyframes nhTextSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes nhTextWobble {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-3deg); }
+  40% { transform: rotate(3deg); }
+  60% { transform: rotate(-2deg); }
+  80% { transform: rotate(2deg); }
+}
+
+@keyframes nhTextBounce {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-8px); }
+  55% { transform: translateY(2px); }
+  75% { transform: translateY(-3px); }
+}
+
+@keyframes nhTextFlash {
+  0%, 48%, 100% { opacity: 1; }
+  49%, 70% { opacity: .18; }
+}
+
+@keyframes nhTextFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes nhTextShake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(-2px, 1px) rotate(-1deg); }
+  40% { transform: translate(2px, -1px) rotate(1deg); }
+  60% { transform: translate(-1px, -1px) rotate(0); }
+  80% { transform: translate(1px, 1px) rotate(1deg); }
+}
+
+/* Between-link Creator transitions */
+
+.nh-phase-exit,
+.nh-phase-enter {
+  animation-duration: 420ms;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(.2,.8,.2,1);
+}
+
+.nh-transition-fade.nh-phase-exit {
+  animation-name: nhExitFade;
+}
+.nh-transition-fade.nh-phase-enter {
+  animation-name: nhEnterFade;
+}
+
+.nh-transition-explode.nh-phase-exit {
+  animation-name: nhExitExplode;
+}
+.nh-transition-explode.nh-phase-enter {
+  animation-name: nhEnterExplode;
+}
+
+.nh-transition-implode.nh-phase-exit {
+  animation-name: nhExitImplode;
+}
+.nh-transition-implode.nh-phase-enter {
+  animation-name: nhEnterImplode;
+}
+
+.nh-transition-slide-left.nh-phase-exit {
+  animation-name: nhExitSlideLeft;
+}
+.nh-transition-slide-left.nh-phase-enter {
+  animation-name: nhEnterSlideLeft;
+}
+
+.nh-transition-slide-right.nh-phase-exit {
+  animation-name: nhExitSlideRight;
+}
+.nh-transition-slide-right.nh-phase-enter {
+  animation-name: nhEnterSlideRight;
+}
+
+.nh-transition-flip.nh-phase-exit {
+  animation-name: nhExitFlip;
+}
+.nh-transition-flip.nh-phase-enter {
+  animation-name: nhEnterFlip;
+}
+
+.nh-transition-pop.nh-phase-exit {
+  animation-name: nhExitPop;
+}
+.nh-transition-pop.nh-phase-enter {
+  animation-name: nhEnterPop;
+}
+
+@keyframes nhExitFade {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(4px); }
+}
+@keyframes nhEnterFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nhExitExplode {
+  from { opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+  to { opacity: 0; transform: scale(2.25) rotate(9deg); filter: blur(8px); }
+}
+@keyframes nhEnterExplode {
+  from { opacity: 0; transform: scale(.18) rotate(-9deg); filter: blur(6px); }
+  to { opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+}
+
+@keyframes nhExitImplode {
+  from { opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+  to { opacity: 0; transform: scale(.12) rotate(-12deg); filter: blur(7px); }
+}
+@keyframes nhEnterImplode {
+  from { opacity: 0; transform: scale(2.1) rotate(12deg); filter: blur(7px); }
+  to { opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+}
+
+@keyframes nhExitSlideLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-70px); }
+}
+@keyframes nhEnterSlideLeft {
+  from { opacity: 0; transform: translateX(70px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes nhExitSlideRight {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(70px); }
+}
+@keyframes nhEnterSlideRight {
+  from { opacity: 0; transform: translateX(-70px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes nhExitFlip {
+  from { opacity: 1; transform: perspective(500px) rotateX(0); }
+  to { opacity: 0; transform: perspective(500px) rotateX(88deg); }
+}
+@keyframes nhEnterFlip {
+  from { opacity: 0; transform: perspective(500px) rotateX(-88deg); }
+  to { opacity: 1; transform: perspective(500px) rotateX(0); }
+}
+
+@keyframes nhExitPop {
+  from { opacity: 1; transform: scale(1); }
+  60% { opacity: 1; transform: scale(1.08); }
+  to { opacity: 0; transform: scale(.78); }
+}
+@keyframes nhEnterPop {
+  from { opacity: 0; transform: scale(.7); }
+  65% { opacity: 1; transform: scale(1.08); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nh-text-group,
+  .nh-svg-wrap {
+    animation: none !important;
+  }
+}
+
+
+/* QR tile intentionally remains static while text motion continues. */
+.nh-qr-tile {
+  pointer-events: none;
+}
+
+
+/* ==========================================================
+   OBS GEOMETRY REPAIR V13.2
+   ========================================================== */
+
+/*
+  560 x 144 is ONLY the transparent browser-source canvas.
+  The original 520 x 104 artwork is translated 20 px inward.
+*/
+.nh-svg-page {
+  width: 560px !important;
+  height: 144px !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.nh-svg-wrap {
+  width: 560px !important;
+  height: 144px !important;
+  overflow: visible !important;
+}
+
+.nh-svg-overlay {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+.nh-qr-tile {
+  filter: none !important;
+  transform: none !important;
+  pointer-events: none;
+}
+
+.nh-qr-tile rect {
+  shape-rendering: crispEdges;
 }

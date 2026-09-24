@@ -62,7 +62,7 @@ export default function PricingPage() {
                       : "/signup"
                   }
                 >
-                  {id === "free" ? "Start free" : "Get lifetime access"}
+                  {id === "free" ? "Start free" : "Get  access"}
                 </Link>
               </article>
             );
@@ -70,7 +70,7 @@ export default function PricingPage() {
         </div>
 
         <p className="pricing-footnote">
-          Existing beta accounts are grandfathered into Creator Lifetime.
+          Existing beta accounts are grandfathered into Creator .
         </p>
       </section>
     </main>

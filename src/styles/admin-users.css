@@ -408,3 +408,57 @@
     flex-direction: column;
   }
 }
+
+
+/* ==========================================================
+   ADMIN FILTER BAR V8
+   ========================================================== */
+
+/*
+  The broader toolbar rule makes child divs grid containers.
+  The filter-pill row is explicitly a horizontal flex toolbar.
+*/
+.admin-users-toolbar > .admin-view-tabs,
+.admin-users-toolbar-stacked > .admin-view-tabs {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.admin-view-tabs button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+
+/* ==========================================================
+   ADMIN READABILITY PASS V9
+   ========================================================== */
+
+.admin-users-page,
+.admin-users-toolbar,
+.admin-user-card,
+.admin-user-row {
+  font-size: 12px;
+}
+
+.admin-view-tabs button {
+  font-size: 11px !important;
+}
+
+.admin-user-card strong,
+.admin-user-row strong {
+  font-size: 12px !important;
+}
+
+.admin-user-card small,
+.admin-user-row small {
+  font-size: 10px !important;
+}

@@ -1156,3 +1156,1332 @@ button:disabled { opacity: .45; cursor: not-allowed; }
     flex-direction: column;
   }
 }
+
+
+/* ==========================================================
+   OBS OVERLAY BUILDER 2026-09
+   ========================================================== */
+
+.polished-overlay-grid {
+  grid-template-columns: minmax(420px, 500px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.overlay-control-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.overlay-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.overlay-plan-chip,
+.overlay-preview-plan {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 9px;
+  border: 1px solid #3a3048;
+  border-radius: 999px;
+  color: #b7a8c9;
+  background: #100c16;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.overlay-section-head {
+  align-items: center;
+}
+
+.overlay-section-head > svg {
+  color: #756985;
+}
+
+.overlay-section-form {
+  padding-top: 2px;
+}
+
+.overlay-toggle-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.overlay-choice-row {
+  display: flex !important;
+  min-height: 54px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 11px;
+  border: 1px solid #2c2634;
+  border-radius: 8px;
+  background: #0b090e;
+}
+
+.overlay-choice-row > span {
+  display: grid;
+  gap: 2px;
+}
+
+.overlay-choice-row strong {
+  color: #d6cfdc;
+  font-size: 11px;
+}
+
+.overlay-choice-row small {
+  color: #6f6677;
+  font-size: 9px;
+}
+
+.overlay-choice-row input {
+  width: 18px !important;
+  height: 18px;
+  min-height: 0;
+}
+
+.overlay-color-grid,
+.overlay-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.paid-overlay-panel {
+  border-color: #382c4d;
+}
+
+.overlay-unlock-link {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid #503a78;
+  border-radius: 6px;
+  color: #bea8ff;
+  background: #181023;
+  font-size: 9px;
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.advanced-settings.overlay-section-form {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 2px 14px 16px;
+  border: 0;
+}
+
+.advanced-settings.overlay-section-form:disabled {
+  opacity: .45;
+}
+
+.segmented.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.effect-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.effect-grid button {
+  min-height: 42px;
+  border: 1px solid #302a38;
+  border-radius: 7px;
+  color: #817887;
+  background: #0a090d;
+  font-size: 10px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.effect-grid button:hover:not(:disabled) {
+  color: #eee8f3;
+  border-color: #55416d;
+  background: #120e18;
+}
+
+.effect-grid button.active {
+  color: #fff;
+  border-color: #7858c7;
+  background: #34215b;
+}
+
+.effect-grid button.creator-effect {
+  display: grid;
+  place-content: center;
+  gap: 1px;
+  border-color: #4e3a6b;
+}
+
+.effect-grid button.creator-effect small {
+  color: #8f7ca7;
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.effect-grid button:disabled {
+  cursor: not-allowed;
+}
+
+.sticky-overlay-preview {
+  position: sticky;
+  top: 18px;
+}
+
+.overlay-preview-note {
+  padding: 10px 14px;
+  border-top: 1px solid #292431;
+  color: #6f6677;
+  font-size: 9px;
+}
+
+@media (max-width: 1100px) {
+  .polished-overlay-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-overlay-preview {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .overlay-heading-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .overlay-color-grid,
+  .overlay-two-column {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================
+   OBS OVERLAY BUILDER V3
+   ========================================================== */
+
+.creator-overlay-panel {
+  border-color: #4a3568;
+  background:
+    linear-gradient(180deg, rgba(111, 66, 193, .055), transparent 130px),
+    var(--panel, #0e0c11);
+}
+
+.creator-effect-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.creator-transition-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.preview-backdrop-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 0 14px 10px;
+}
+
+.preview-backdrop-tabs button {
+  min-height: 27px;
+  padding: 0 9px;
+  border: 1px solid #302a38;
+  border-radius: 6px;
+  color: #756d7d;
+  background: #0b090e;
+  font-size: 8px;
+  font-weight: 850;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.preview-backdrop-tabs button.active {
+  color: #fff;
+  border-color: #7150aa;
+  background: #2c1e46;
+}
+
+.overlay-preview-stage-clean {
+  position: relative;
+  display: grid;
+  min-height: 330px;
+  place-items: center;
+  overflow: hidden;
+  transition: background .18s ease;
+}
+
+.preview-backdrop-dark {
+  background: #17141c;
+}
+
+.preview-backdrop-light {
+  background: #d9d7dd;
+}
+
+.preview-backdrop-green {
+  background: #00b140;
+}
+
+.preview-backdrop-checker {
+  background-color: #1d1922;
+  background-image:
+    linear-gradient(45deg, #2b2631 25%, transparent 25%),
+    linear-gradient(-45deg, #2b2631 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #2b2631 75%),
+    linear-gradient(-45deg, transparent 75%, #2b2631 75%);
+  background-size: 24px 24px;
+  background-position:
+    0 0,
+    0 12px,
+    12px -12px,
+    -12px 0;
+}
+
+.overlay-preview-head {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .creator-effect-grid,
+  .creator-transition-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .overlay-preview-stage-clean {
+    min-height: 250px;
+  }
+}
+
+
+/* ==========================================================
+   OBS OVERLAY BUILDER V4 — PRESETS / LINK CHAINS
+   ========================================================== */
+
+.overlay-compact-labels > label,
+.overlay-compact-labels > .overlay-two-column > label,
+.overlay-compact-labels > .overlay-color-grid > label {
+  font-size: 9px !important;
+  line-height: 1.2;
+  letter-spacing: .01em;
+}
+
+.overlay-compact-labels .segmented button,
+.overlay-compact-labels .effect-grid button,
+.overlay-compact-labels select,
+.overlay-compact-labels code {
+  font-size: 9px;
+}
+
+.preset-manager,
+.overlay-chain-list {
+  display: grid;
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+
+.preset-save-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+}
+
+.preset-save-row input {
+  min-width: 0;
+  height: 34px;
+  border: 1px solid #302936;
+  border-radius: 7px;
+  color: #eee9f2;
+  background: #0b090e;
+  padding: 0 10px;
+  font-size: 10px;
+}
+
+.preset-list {
+  display: grid;
+  gap: 5px;
+}
+
+.preset-row {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 8px 6px 10px;
+  border: 1px solid #2b2531;
+  border-radius: 7px;
+  background: #0b090e;
+}
+
+.preset-row strong {
+  color: #dcd4e3;
+  font-size: 10px;
+}
+
+.preset-row > div {
+  display: flex;
+  gap: 5px;
+}
+
+.preset-row button {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 1px solid #3a3044;
+  border-radius: 6px;
+  color: #a99eb3;
+  background: #131017;
+  font-size: 8px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.preset-row button:hover {
+  color: #fff;
+  border-color: #66517e;
+}
+
+.preset-row button.danger-lite:hover {
+  color: #ffb0b0;
+  border-color: #6c3434;
+}
+
+.preset-empty {
+  color: #6d6475;
+  font-size: 9px;
+}
+
+.overlay-chain-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) minmax(130px, 180px);
+  align-items: center;
+  gap: 9px;
+  padding: 8px;
+  border: 1px solid #2b2531;
+  border-radius: 7px;
+  background: #0b090e;
+}
+
+.chain-index {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid #433653;
+  border-radius: 999px;
+  color: #9e8caf;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.overlay-chain-row > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.overlay-chain-row strong {
+  overflow: hidden;
+  color: #ddd6e4;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overlay-chain-row small {
+  overflow: hidden;
+  color: #706776;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overlay-chain-row select {
+  min-width: 0;
+  height: 30px;
+  border: 1px solid #302936;
+  border-radius: 6px;
+  color: #c8bfce;
+  background: #100d13;
+  padding: 0 7px;
+  font-size: 9px;
+}
+
+@media (max-width: 640px) {
+  .preset-save-row {
+    grid-template-columns: 1fr;
+  }
+
+  .overlay-chain-row {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .overlay-chain-row select {
+    grid-column: 2;
+  }
+}
+
+
+/* ==========================================================
+   OBS HOW-TO
+   ========================================================== */
+
+.obs-howto-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.obs-howto-main,
+.obs-howto-reference {
+  overflow: hidden;
+}
+
+.obs-howto-url {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px 34px;
+  gap: 6px;
+  padding: 0 14px 14px;
+}
+
+.obs-howto-url code {
+  display: flex;
+  min-width: 0;
+  min-height: 34px;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 10px;
+  border: 1px solid #302936;
+  border-radius: 7px;
+  color: #cfc7d5;
+  background: #0a080d;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.obs-howto-steps {
+  display: grid;
+  gap: 6px;
+  padding: 0 14px 14px;
+}
+
+.obs-step {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  padding: 9px 11px;
+  border: 1px solid #2b2531;
+  border-radius: 8px;
+  background: #0b090e;
+}
+
+.obs-step-number {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid #49395b;
+  border-radius: 999px;
+  color: #b49dc9;
+  background: #17101f;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.obs-step > div {
+  display: grid;
+  gap: 3px;
+}
+
+.obs-step strong {
+  color: #e0d9e5;
+  font-size: 10px;
+}
+
+.obs-step p {
+  margin: 0;
+  color: #817786;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.obs-step > svg {
+  color: #685b74;
+}
+
+.obs-step.complete {
+  border-color: #34523e;
+  background: #0b120d;
+}
+
+.obs-step.complete .obs-step-number {
+  color: #8bc69b;
+  border-color: #34523e;
+  background: #0e1911;
+}
+
+.obs-reference-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0 14px 14px;
+}
+
+.obs-reference-list > div {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid #27222d;
+}
+
+.obs-reference-list dt {
+  color: #766d7d;
+  font-size: 9px;
+}
+
+.obs-reference-list dd {
+  margin: 0;
+  color: #d4ccd9;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.obs-howto-note {
+  margin: 0 14px 14px;
+  padding: 10px;
+  border: 1px solid #382d47;
+  border-radius: 8px;
+  background: #120e18;
+}
+
+.obs-howto-note strong {
+  color: #b9a4d6;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.obs-howto-note p {
+  margin: 4px 0 0;
+  color: #817788;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .obs-howto-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .obs-step {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+
+  .obs-step > svg {
+    display: none;
+  }
+
+  .obs-howto-url {
+    grid-template-columns: minmax(0, 1fr) 34px;
+  }
+
+  .obs-howto-url a.icon-button {
+    display: none;
+  }
+}
+
+
+/* ==========================================================
+   OBS OVERLAY BUILDER V6 — CONTROL CONSISTENCY
+   ========================================================== */
+
+/*
+  Keep every field label at one size. The previous compact-label
+  override made Pro/Creator controls look unrelated to the rest
+  of the builder.
+*/
+.settings-form > label,
+.advanced-settings > label,
+.overlay-two-column > label,
+.overlay-color-grid > label,
+.overlay-compact-labels > label,
+.overlay-compact-labels > .overlay-two-column > label,
+.overlay-compact-labels > .overlay-color-grid > label {
+  color: #a69cad !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+}
+
+.settings-form select,
+.advanced-settings select,
+.settings-form input:not([type="range"]):not([type="color"]):not([type="checkbox"]),
+.advanced-settings input:not([type="range"]):not([type="color"]):not([type="checkbox"]) {
+  min-height: 36px;
+  font-size: 10px;
+}
+
+.segmented button,
+.effect-grid button,
+.overlay-compact-labels .segmented button,
+.overlay-compact-labels .effect-grid button {
+  min-height: 36px;
+  font-size: 10px !important;
+}
+
+/* Color controls */
+
+.color-control {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  grid-template-rows: 36px;
+  gap: 7px;
+  position: relative;
+  margin-top: 6px;
+}
+
+.color-picker-input {
+  position: absolute;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.color-swatch {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #4a4053;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.06);
+  cursor: pointer;
+}
+
+.color-hex-input {
+  width: 100%;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 10px !important;
+  border: 1px solid #342d3b !important;
+  border-radius: 8px !important;
+  color: #d8d0de !important;
+  background: #0b090e !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+  font-size: 10px !important;
+  text-transform: uppercase;
+}
+
+/* Font selector */
+
+.font-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 6px;
+}
+
+.font-choice {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 9px;
+  border: 1px solid #322b3a;
+  border-radius: 8px;
+  color: #a59cab;
+  background: #0b090e;
+  text-align: left;
+  cursor: pointer;
+}
+
+.font-choice:hover {
+  color: #eee8f3;
+  border-color: #59466d;
+  background: #120e18;
+}
+
+.font-choice.active {
+  color: #ffffff;
+  border-color: #7758b0;
+  background: #25183a;
+  box-shadow: inset 0 0 0 1px rgba(139, 92, 246, .18);
+}
+
+.font-choice-preview {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid #3a3043;
+  border-radius: 6px;
+  color: #dcd3e4;
+  background: #100d14;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.font-choice-name {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Keep range labels/value text visually aligned. */
+.range-row strong {
+  min-width: 54px;
+  color: #d3cbd9;
+  font-size: 10px;
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .font-choice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================
+   OBS OVERLAY BUILDER V7 — TIER ACCORDIONS
+   ========================================================== */
+
+.overlay-accordion {
+  padding: 0;
+  overflow: hidden;
+}
+
+.overlay-accordion-summary {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.overlay-accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.overlay-accordion-summary > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+}
+
+.overlay-accordion-summary strong {
+  color: #ded6e4;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.overlay-accordion-summary::after {
+  content: "▾";
+  color: #766b80;
+  font-size: 12px;
+  transform: rotate(-90deg);
+  transition: transform .16s ease;
+}
+
+.overlay-accordion[open] .overlay-accordion-summary::after {
+  transform: rotate(0deg);
+}
+
+.overlay-accordion-hint {
+  margin-left: auto;
+  color: #716777;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.overlay-tier-badge {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  padding: 0 7px;
+  border: 1px solid #5b4581;
+  border-radius: 999px;
+  color: #c8afff;
+  background: #1b1227;
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: .05em;
+}
+
+.overlay-tier-badge.creator {
+  border-color: #6d4b32;
+  color: #f0c38e;
+  background: #23170f;
+}
+
+.overlay-accordion-body {
+  border-top: 1px solid #29232f;
+  padding-top: 12px;
+}
+
+.overlay-accordion-body .advanced-settings {
+  margin: 0;
+}
+
+.paid-preview-note {
+  margin: 0 14px 14px;
+  padding: 9px 10px;
+  border: 1px solid #45365b;
+  border-radius: 7px;
+  color: #9c8dab;
+  background: #120d19;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.paid-preview-note.creator {
+  border-color: #513822;
+  color: #bda083;
+  background: #17100a;
+}
+
+.upgrade-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(4, 3, 6, .78);
+  backdrop-filter: blur(5px);
+}
+
+.upgrade-modal {
+  width: min(420px, 100%);
+  padding: 20px;
+  border: 1px solid #443650;
+  border-radius: 12px;
+  background: #100d13;
+  box-shadow: 0 22px 80px rgba(0, 0, 0, .5);
+}
+
+.upgrade-modal h2 {
+  margin: 12px 0 6px;
+  color: #f1ebf5;
+  font-size: 18px;
+}
+
+.upgrade-modal p {
+  margin: 0;
+  color: #93899b;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.upgrade-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.upgrade-modal-actions a.button {
+  text-decoration: none;
+}
+
+
+/* ==========================================================
+   DASHBOARD / OVERLAY COMPACTNESS V8
+   ========================================================== */
+
+/* Give numeric range values room from the panel edge. */
+.range-row {
+  grid-template-columns: minmax(0, 1fr) 58px !important;
+  gap: 12px !important;
+  padding-right: 8px;
+}
+
+.range-row strong {
+  min-width: 58px !important;
+  padding-right: 2px;
+  text-align: right !important;
+}
+
+/* Keep collapsed sections compact and consistent. */
+.overlay-accordion-summary {
+  min-height: 48px;
+}
+
+.overlay-accordion-body .settings-form,
+.overlay-accordion-body .advanced-settings {
+  padding-bottom: 14px;
+}
+
+/* Draggable dashboard sidebar navigation. */
+.sidebar-nav-list {
+  display: grid;
+  gap: 2px;
+}
+
+.sidebar-draggable-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: center;
+  border-radius: 7px;
+  transition:
+    opacity .12s ease,
+    background .12s ease,
+    box-shadow .12s ease;
+}
+
+.sidebar-draggable-item.dragging {
+  opacity: .45;
+}
+
+.sidebar-draggable-item.drag-over {
+  background: #17131e;
+  box-shadow: inset 0 2px 0 #7957c8;
+}
+
+.sidebar-drag-handle {
+  display: grid;
+  width: 18px;
+  height: 100%;
+  min-height: 34px;
+  place-items: center;
+  color: #4f4658;
+  cursor: grab;
+}
+
+.sidebar-draggable-item:hover .sidebar-drag-handle {
+  color: #8b7b98;
+}
+
+.sidebar-draggable-item:active .sidebar-drag-handle {
+  cursor: grabbing;
+}
+
+.sidebar-reorder-link {
+  min-width: 0;
+  margin: 0 !important;
+}
+
+
+/* ==========================================================
+   NUPHUB READABILITY PASS V9
+   Normal interface copy should not look like fine print.
+   ========================================================== */
+
+/* General dashboard copy */
+.dashboard-page,
+.dash-main,
+.panel,
+.settings-panel {
+  font-size: 12px;
+}
+
+.dash-subtitle,
+.panel p,
+.settings-panel p,
+.overlay-preview-note,
+.paid-preview-note,
+.upgrade-modal p {
+  font-size: 12px !important;
+  line-height: 1.5;
+}
+
+/* Section headings and ordinary field labels */
+.panel-head strong,
+.overlay-section-head strong,
+.overlay-accordion-summary strong {
+  font-size: 12px !important;
+}
+
+.settings-form > label,
+.advanced-settings > label,
+.overlay-two-column > label,
+.overlay-color-grid > label,
+.overlay-compact-labels > label,
+.overlay-compact-labels > .overlay-two-column > label,
+.overlay-compact-labels > .overlay-color-grid > label {
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+/* Controls should be immediately readable */
+.segmented button,
+.effect-grid button,
+.overlay-compact-labels .segmented button,
+.overlay-compact-labels .effect-grid button,
+.settings-form select,
+.advanced-settings select,
+.color-hex-input,
+.preset-save-row input,
+.overlay-chain-row select,
+.preview-backdrop-tabs button {
+  font-size: 11px !important;
+}
+
+/* Sidebar */
+.side-item,
+.sidebar-reorder-link {
+  font-size: 12px !important;
+}
+
+.dash-profile strong {
+  font-size: 12px !important;
+}
+
+.dash-profile span {
+  font-size: 10px !important;
+}
+
+/* OBS How-To: these are instructions, not fine print */
+.obs-step strong {
+  font-size: 12px !important;
+}
+
+.obs-step p {
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+.obs-howto-url code {
+  font-size: 11px !important;
+}
+
+.obs-reference-list dt {
+  font-size: 11px !important;
+}
+
+.obs-reference-list dd {
+  font-size: 12px !important;
+}
+
+.obs-howto-note strong {
+  font-size: 10px !important;
+}
+
+.obs-howto-note p {
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+}
+
+/* Saved overlays and chain rows */
+.preset-row strong,
+.overlay-chain-row strong {
+  font-size: 11px !important;
+}
+
+.preset-row button,
+.overlay-chain-row small,
+.preset-empty {
+  font-size: 10px !important;
+}
+
+/* Numeric slider values */
+.range-row strong {
+  font-size: 11px !important;
+}
+
+/*
+  These remain intentionally small because they are metadata,
+  category markers, or status tags rather than primary copy.
+*/
+.panel-label,
+.kicker,
+.overlay-tier-badge,
+.overlay-accordion-hint,
+.overlay-plan-chip,
+.overlay-preview-plan,
+.chain-index {
+  font-size: 9px !important;
+}
+
+
+/* ==========================================================
+   CREATOR LINK CHAIN + QR V10
+   ========================================================== */
+
+.overlay-chain-explainer {
+  margin: 0 14px 10px;
+  color: #9a909f;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.creator-chain-list {
+  gap: 8px;
+}
+
+.creator-chain-card {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #302838;
+  border-radius: 9px;
+  background: #0b090e;
+}
+
+.creator-chain-title {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.creator-chain-title > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.creator-chain-title strong {
+  overflow: hidden;
+  color: #e2dbe7;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.creator-chain-title small {
+  overflow: hidden;
+  color: #827888;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.creator-chain-controls {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.4fr) repeat(3, minmax(88px, .6fr));
+  gap: 8px;
+}
+
+.creator-chain-controls label {
+  display: grid;
+  gap: 5px;
+  color: #a69cad;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.creator-chain-controls select,
+.chain-qr-toggle {
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid #342d3b;
+  border-radius: 7px;
+  color: #d5cddc;
+  background: #100d13;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.chain-qr-toggle {
+  cursor: pointer;
+  font-weight: 850;
+}
+
+.chain-qr-toggle.active {
+  color: #ffffff;
+  border-color: #7154a7;
+  background: #2d1e47;
+}
+
+.creator-chain-save {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 2px 14px 14px;
+  padding-top: 12px;
+  border-top: 1px solid #29232f;
+}
+
+.creator-chain-save span {
+  max-width: 470px;
+  color: #8e8495;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .creator-chain-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .creator-chain-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-chain-save {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+/* ==========================================================
+   SINGLE SAVE ACTION V12
+   ========================================================== */
+
+.overlay-preview-head {
+  align-items: center;
+}
+
+.overlay-save-everything {
+  flex: 0 0 auto;
+  min-width: 148px;
+  justify-content: center;
+}
+
+.creator-chain-save {
+  justify-content: flex-start !important;
+}
+
+.creator-chain-save span {
+  max-width: none !important;
+}
+
+@media (max-width: 560px) {
+  .overlay-preview-head {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .overlay-save-everything {
+    width: 100%;
+  }
+}

@@ -50,7 +50,7 @@ The plan update goes through `/api/admin/users` and the server verifies the call
 
 `/dashboard/account` shows the signed-in account's current plan and admin role. After migration 012, your account should display:
 
-- Creator Lifetime
+- Creator 
 - Owner
 
 ## 5. Build

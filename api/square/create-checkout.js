@@ -3,11 +3,11 @@ import crypto from "node:crypto";
 
 const PLANS = {
   pro: {
-    name: "NupHub Pro Lifetime",
+    name: "NupHub Pro ",
     amount: 2900,
   },
   creator: {
-    name: "NupHub Creator Lifetime",
+    name: "NupHub Creator ",
     amount: 6900,
   },
 };
