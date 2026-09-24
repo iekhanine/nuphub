@@ -15,7 +15,7 @@ export default function AccountPage() {
   useEffect(() => {
     getMyProfile().then((value) => {
       setProfile(value);
-      setDisplayName(value.display_name ?? "");
+      setDisplayName(value?.display_name ?? "");
     });
   }, []);
 
@@ -23,8 +23,10 @@ export default function AccountPage() {
     const updated = await updateProfile({
       display_name: displayName.trim() || null,
     });
+
     setProfile(updated);
     setMessage("Saved.");
+
     window.setTimeout(() => setMessage(""), 1500);
   }
 
@@ -84,8 +86,10 @@ export default function AccountPage() {
               <strong>Your shareable link page</strong>
             </div>
           </div>
+
           <div className="account-public-card">
             <span>nuphub.com/u/{profile?.handle ?? "yourname"}</span>
+
             {profile && (
               <a
                 className="button ghost"
