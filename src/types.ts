@@ -27,6 +27,8 @@ export type OverlayPosition =
   | "top-right";
 
 export type OverlayStyle = "glass" | "solid" | "minimal";
+export type OverlayAccentBarSide = "left" | "right" | "none";
+export type OverlayTextAlign = "left" | "right";
 
 export type OverlaySettings = {
   user_id: string;
@@ -34,6 +36,9 @@ export type OverlaySettings = {
   position: OverlayPosition;
   accent_color: string;
   style: OverlayStyle;
+  background_opacity: number;
+  accent_bar_side: OverlayAccentBarSide;
+  text_align: OverlayTextAlign;
   show_label: boolean;
   show_url: boolean;
   updated_at: string;
@@ -52,6 +57,9 @@ export type PublicStreamer = {
     position: OverlayPosition;
     accent_color: string;
     style: OverlayStyle;
+    background_opacity: number;
+    accent_bar_side: OverlayAccentBarSide;
+    text_align: OverlayTextAlign;
     show_label: boolean;
     show_url: boolean;
   };

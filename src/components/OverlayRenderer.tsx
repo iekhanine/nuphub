@@ -16,6 +16,11 @@ function truncate(value: string, max: number) {
   return `${value.slice(0, Math.max(0, max - 1))}…`;
 }
 
+function clampOpacity(value: number | undefined) {
+  if (!Number.isFinite(value)) return 0.94;
+  return Math.min(1, Math.max(0, value ?? 0.94));
+}
+
 export function OverlayRenderer({ streamer, preview = false }: Props) {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -99,14 +104,23 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
 
   const accent = streamer.settings.accent_color || "#8b5cf6";
   const style = streamer.settings.style;
+  const backgroundOpacity = clampOpacity(
+    streamer.settings.background_opacity,
+  );
+  const accentBarSide = streamer.settings.accent_bar_side ?? "left";
+  const textAlign = streamer.settings.text_align ?? "left";
 
   const showPanel = style !== "minimal";
-  const fill =
-    style === "solid"
-      ? "#0a0810"
-      : style === "glass"
-        ? "rgba(10, 8, 14, 0.94)"
-        : "transparent";
+  const fill = style === "solid" ? "#0a0810" : "#0a080e";
+
+  const textAnchor = textAlign === "right" ? "end" : "start";
+  const textX = textAlign === "right" ? 492 : 28;
+  const labelY = streamer.settings.show_url ? 40 : 60;
+  const urlY = streamer.settings.show_label ? 70 : 62;
+
+  const accentRectX = accentBarSide === "right" ? 504 : 8;
+  const accentRectY = showPanel ? 10 : 18;
+  const accentRectH = showPanel ? 84 : 68;
 
   return (
     <div
@@ -123,43 +137,9 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
         aria-label={`${label} ${url}`}
         preserveAspectRatio="xMinYMid meet"
       >
-        {showPanel && (
-          <>
-            <rect
-              x="8"
-              y="10"
-              width="504"
-              height="84"
-              rx="10"
-              fill={fill}
-              stroke="rgba(255,255,255,.13)"
-            />
-            {style === "glass" && (
-              <rect
-                x="9"
-                y="11"
-                width="502"
-                height="82"
-                rx="9"
-                fill="url(#nhGlass)"
-                opacity=".28"
-              />
-            )}
-          </>
-        )}
-
-        <rect
-          x="8"
-          y={showPanel ? "10" : "18"}
-          width="4"
-          height={showPanel ? "84" : "68"}
-          rx="2"
-          fill={accent}
-        />
-
         <defs>
           <linearGradient id="nhGlass" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity=".08" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity=".11" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
@@ -174,35 +154,73 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
           </filter>
         </defs>
 
-        <g filter={showPanel ? "url(#nhShadow)" : undefined}>
-          {streamer.settings.show_label && (
-            <text
-              x="28"
-              y={streamer.settings.show_url ? "40" : "60"}
-              fill="#b9b1c3"
-              fontSize="12"
-              fontWeight="900"
-              letterSpacing="1.2"
-              fontFamily='Inter, "Segoe UI", Arial, sans-serif'
-            >
-              {label.toUpperCase()}
-            </text>
-          )}
+        {showPanel && (
+          <g filter="url(#nhShadow)">
+            <rect
+              x="8"
+              y="10"
+              width="504"
+              height="84"
+              rx="10"
+              fill={fill}
+              fillOpacity={backgroundOpacity}
+              stroke="rgba(255,255,255,.13)"
+            />
 
-          {streamer.settings.show_url && (
-            <text
-              x="28"
-              y={streamer.settings.show_label ? "70" : "62"}
-              fill="#ffffff"
-              fontSize="25"
-              fontWeight="800"
-              letterSpacing="-0.5"
-              fontFamily='Inter, "Segoe UI", Arial, sans-serif'
-            >
-              {url}
-            </text>
-          )}
-        </g>
+            {style === "glass" && (
+              <rect
+                x="9"
+                y="11"
+                width="502"
+                height="82"
+                rx="9"
+                fill="url(#nhGlass)"
+                opacity={Math.min(0.34, backgroundOpacity * 0.34)}
+              />
+            )}
+          </g>
+        )}
+
+        {accentBarSide !== "none" && (
+          <rect
+            x={accentRectX}
+            y={accentRectY}
+            width="4"
+            height={accentRectH}
+            rx="2"
+            fill={accent}
+          />
+        )}
+
+        {streamer.settings.show_label && (
+          <text
+            x={textX}
+            y={labelY}
+            fill="#b9b1c3"
+            fontSize="12"
+            fontWeight="900"
+            letterSpacing="1.2"
+            fontFamily='Inter, "Segoe UI", Arial, sans-serif'
+            textAnchor={textAnchor}
+          >
+            {label.toUpperCase()}
+          </text>
+        )}
+
+        {streamer.settings.show_url && (
+          <text
+            x={textX}
+            y={urlY}
+            fill="#ffffff"
+            fontSize="25"
+            fontWeight="800"
+            letterSpacing="-0.5"
+            fontFamily='Inter, "Segoe UI", Arial, sans-serif'
+            textAnchor={textAnchor}
+          >
+            {url}
+          </text>
+        )}
       </svg>
     </div>
   );

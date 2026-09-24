@@ -137,6 +137,9 @@ export async function saveOverlaySettings(
       | "position"
       | "accent_color"
       | "style"
+      | "background_opacity"
+      | "accent_bar_side"
+      | "text_align"
       | "show_label"
       | "show_url"
     >

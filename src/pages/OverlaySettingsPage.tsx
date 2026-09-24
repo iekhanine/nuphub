@@ -10,9 +10,11 @@ import {
   saveOverlaySettings,
 } from "../lib/data";
 import type {
+  OverlayAccentBarSide,
   OverlayPosition,
   OverlaySettings,
   OverlayStyle,
+  OverlayTextAlign,
   Profile,
   PublicStreamer,
   StreamLink,
@@ -28,6 +30,8 @@ const positions: OverlayPosition[] = [
 ];
 
 const styles: OverlayStyle[] = ["glass", "solid", "minimal"];
+const accentBarSides: OverlayAccentBarSide[] = ["left", "right", "none"];
+const textAlignments: OverlayTextAlign[] = ["left", "right"];
 
 export default function OverlaySettingsPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -49,6 +53,7 @@ export default function OverlaySettingsPage() {
 
   const streamer = useMemo<PublicStreamer | null>(() => {
     if (!profile || !settings) return null;
+
     return {
       handle: profile.handle,
       display_name: profile.display_name,
@@ -57,6 +62,9 @@ export default function OverlaySettingsPage() {
         position: settings.position,
         accent_color: settings.accent_color,
         style: settings.style,
+        background_opacity: settings.background_opacity ?? 0.94,
+        accent_bar_side: settings.accent_bar_side ?? "left",
+        text_align: settings.text_align ?? "left",
         show_label: settings.show_label,
         show_url: settings.show_url,
       },
@@ -69,6 +77,7 @@ export default function OverlaySettingsPage() {
 
   async function save() {
     if (!settings) return;
+
     setSaving(true);
     setMessage("");
 
@@ -78,9 +87,13 @@ export default function OverlaySettingsPage() {
         position: settings.position,
         accent_color: settings.accent_color,
         style: settings.style,
+        background_opacity: settings.background_opacity,
+        accent_bar_side: settings.accent_bar_side,
+        text_align: settings.text_align,
         show_label: settings.show_label,
         show_url: settings.show_url,
       });
+
       setSettings(updated);
       setMessage("Saved.");
       window.setTimeout(() => setMessage(""), 1600);
@@ -104,6 +117,10 @@ export default function OverlaySettingsPage() {
     );
   }
 
+  const opacityPercent = Math.round(
+    (settings.background_opacity ?? 0.94) * 100,
+  );
+
   return (
     <DashboardShell handle={profile?.handle}>
       <div className="dash-heading">
@@ -111,6 +128,7 @@ export default function OverlaySettingsPage() {
           <span className="kicker">OBS OVERLAY</span>
           <h1>Make it yours.</h1>
         </div>
+
         <button className="button primary" onClick={() => void save()}>
           <Save size={17} />
           {saving ? "Saving…" : "Save"}
@@ -128,12 +146,14 @@ export default function OverlaySettingsPage() {
 
           <div className="source-row">
             <code>{obsUrl}</code>
+
             <button
               className="icon-button"
               onClick={() => void navigator.clipboard.writeText(obsUrl)}
             >
               <Copy size={17} />
             </button>
+
             <a
               className="icon-button"
               href={`/obs/${profile?.handle}`}
@@ -162,6 +182,30 @@ export default function OverlaySettingsPage() {
                 />
                 <strong>{settings.rotation_seconds}s</strong>
               </div>
+            </label>
+
+            <label>
+              Background transparency
+              <div className="range-row">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={opacityPercent}
+                  onChange={(event) =>
+                    setSettings({
+                      ...settings,
+                      background_opacity:
+                        Number(event.target.value) / 100,
+                    })
+                  }
+                />
+                <strong>{opacityPercent}%</strong>
+              </div>
+              <small>
+                Controls the pill background only. Text stays fully visible.
+              </small>
             </label>
 
             <label>
@@ -194,6 +238,42 @@ export default function OverlaySettingsPage() {
                     key={style}
                   >
                     {style}
+                  </button>
+                ))}
+              </div>
+            </label>
+
+            <label>
+              Accent bar
+              <div className="segmented">
+                {accentBarSides.map((side) => (
+                  <button
+                    type="button"
+                    className={settings.accent_bar_side === side ? "active" : ""}
+                    onClick={() =>
+                      setSettings({ ...settings, accent_bar_side: side })
+                    }
+                    key={side}
+                  >
+                    {side}
+                  </button>
+                ))}
+              </div>
+            </label>
+
+            <label>
+              Text alignment
+              <div className="segmented">
+                {textAlignments.map((align) => (
+                  <button
+                    type="button"
+                    className={settings.text_align === align ? "active" : ""}
+                    onClick={() =>
+                      setSettings({ ...settings, text_align: align })
+                    }
+                    key={align}
+                  >
+                    {align}
                   </button>
                 ))}
               </div>
@@ -255,6 +335,7 @@ export default function OverlaySettingsPage() {
               <strong>What viewers see</strong>
             </div>
           </div>
+
           <div className="overlay-preview-stage">
             <div className="scene-grid" />
             <span className="live-badge">LIVE</span>
