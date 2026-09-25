@@ -22,6 +22,7 @@ import {
   getOverlaySettings,
   saveOverlayPreset,
   saveOverlaySettings,
+  setCreatorCustomText,
   setOverlaySequenceItem,
 } from "../lib/data";
 import { hasPlan } from "../lib/plans";
@@ -173,6 +174,8 @@ function normalizeSettings(settings: OverlaySettings): OverlaySettings {
     font_scale: settings.font_scale ?? 1,
     font_family: settings.font_family ?? "inter",
     text_align: settings.text_align ?? "left",
+    custom_label_text: settings.custom_label_text ?? null,
+    custom_url_text: settings.custom_url_text ?? null,
   };
 }
 
@@ -290,6 +293,8 @@ export default function OverlaySettingsPage() {
         font_scale: settings.font_scale ?? 1,
         show_label: settings.show_label,
         show_url: settings.show_url,
+        custom_label_text: settings.custom_label_text ?? null,
+        custom_url_text: settings.custom_url_text ?? null,
       },
       links: links
         .filter((item) => item.enabled)
@@ -358,7 +363,18 @@ export default function OverlaySettingsPage() {
         (field) => settings[field] !== savedSettings[field],
       );
 
-    const changedCreatorFeature = !creator && linkChainChanged();
+    const changedCreatorText =
+      !!savedSettings &&
+      (
+        (settings.custom_label_text ?? "") !==
+          (savedSettings.custom_label_text ?? "") ||
+        (settings.custom_url_text ?? "") !==
+          (savedSettings.custom_url_text ?? "")
+      );
+
+    const changedCreatorFeature =
+      !creator &&
+      (linkChainChanged() || changedCreatorText);
 
     // Keep the save atomic. Do not partially save allowed settings
     // when the current preview also contains locked-tier changes.
@@ -405,26 +421,37 @@ export default function OverlaySettingsPage() {
           : {}),
       });
 
+      let finalSettings = updated;
+
       if (creator) {
         const enabledLinks = links.filter((item) => item.enabled);
 
-        await Promise.all(
-          enabledLinks.map((link) => {
-            const item = chainItem(link.id);
+        const [, creatorSettings] = await Promise.all([
+          Promise.all(
+            enabledLinks.map((link) => {
+              const item = chainItem(link.id);
 
-            return setOverlaySequenceItem(link.id, {
-              presetId: item.preset_id,
-              durationSeconds: item.duration_seconds,
-              weight: item.weight,
-              qrEnabled: item.qr_enabled,
-            });
+              return setOverlaySequenceItem(link.id, {
+                presetId: item.preset_id,
+                durationSeconds: item.duration_seconds,
+                weight: item.weight,
+                qrEnabled: item.qr_enabled,
+              });
+            }),
+          ),
+          setCreatorCustomText({
+            customLabelText:
+              settings.custom_label_text?.trim() || null,
+            customUrlText:
+              settings.custom_url_text?.trim() || null,
           }),
-        );
+        ]);
 
+        finalSettings = creatorSettings;
         setSavedSequence(sequence.map((item) => ({ ...item })));
       }
 
-      const normalized = normalizeSettings(updated);
+      const normalized = normalizeSettings(finalSettings);
       setSettings(normalized);
       setSavedSettings(normalized);
       setMessage("Everything saved.");
@@ -519,6 +546,10 @@ export default function OverlaySettingsPage() {
 
   const obsUrl = profile
     ? `${window.location.origin}/obs/${profile.handle}`
+    : "";
+
+  const allLinksUrl = profile
+    ? `${window.location.origin}/obs/${profile.handle}/all`
     : "";
 
   if (loading || !settings || !streamer) {
@@ -1218,7 +1249,7 @@ export default function OverlaySettingsPage() {
             </div>
           </details>
 
-          <details className="panel settings-panel overlay-accordion">
+          <details className="panel settings-panel overlay-accordion creator-settings-accordion">
             <summary className="overlay-accordion-summary">
               <div>
                 <span className="overlay-tier-badge creator">CREATOR</span>
@@ -1287,7 +1318,7 @@ export default function OverlaySettingsPage() {
             </div>
           </details>
 
-          <details className="panel settings-panel overlay-accordion">
+          <details className="panel settings-panel overlay-accordion creator-settings-accordion">
             <summary className="overlay-accordion-summary">
               <div>
                 <span className="overlay-tier-badge creator">CREATOR</span>
@@ -1430,6 +1461,7 @@ export default function OverlaySettingsPage() {
                 </span>
               </div>
 
+
               {!creator && (
                 <div className="paid-preview-note creator">
                   You can experiment with Link Chain in the live preview. Upgrade to Creator to save it to OBS.
@@ -1438,8 +1470,150 @@ export default function OverlaySettingsPage() {
             </div>
           </details>
 
+          <details className="panel settings-panel overlay-accordion creator-settings-accordion">
+            <summary className="overlay-accordion-summary">
+              <div>
+                <span className="overlay-tier-badge creator">CREATOR</span>
+                <strong>All Links Overlay</strong>
+              </div>
+              <span className="overlay-accordion-hint">
+                {creator ? "Active" : "Preview"}
+              </span>
+            </summary>
+
+            <div className="overlay-accordion-body creator-all-links-body">
+              <div className="creator-all-links-copy">
+                <strong>Dedicated OBS Browser Source</strong>
+                <p>
+                  Shows every enabled link at once for Starting Soon, BRB,
+                  intermission, or stream-ending scenes. QR visibility follows
+                  each link's QR setting in Link Chain.
+                </p>
+              </div>
+
+              {creator ? (
+                <>
+                  <div className="creator-all-links-url-row">
+                    <code>{allLinksUrl}</code>
+                    <button
+                      type="button"
+                      className="icon-button"
+                      onClick={() =>
+                        void navigator.clipboard.writeText(allLinksUrl)
+                      }
+                      title="Copy All Links overlay URL"
+                    >
+                      <Copy size={16} />
+                    </button>
+                    <a
+                      className="icon-button"
+                      href={allLinksUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Open All Links overlay"
+                    >
+                      <ExternalLink size={16} />
+                    </a>
+                  </div>
+
+                  <div className="creator-all-links-specs">
+                    <span>
+                      <b>OBS size:</b> 960 × 540
+                    </span>
+                    <span>
+                      <b>QR:</b> Controlled per link in Link Chain
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="paid-preview-note creator creator-all-links-locked">
+                  <span>
+                    Creator Lifetime unlocks the dedicated All Links Browser Source.
+                  </span>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => setUpgradePrompt("creator")}
+                  >
+                    Upgrade to Creator
+                  </button>
+                </div>
+              )}
+            </div>
+          </details>
+
+          <details className="panel settings-panel overlay-accordion creator-settings-accordion">
+            <summary className="overlay-accordion-summary">
+              <div>
+                <span className="overlay-tier-badge creator">CREATOR</span>
+                <strong>Custom Text</strong>
+              </div>
+              <span className="overlay-accordion-hint">
+                {creator ? "Active" : "Preview"}
+              </span>
+            </summary>
+
+            <div className="overlay-accordion-body creator-custom-text-body">
+              <div className="overlay-chain-explainer">
+                Override the rotating overlay's visible title and Message text.
+                Leave either field blank to use the link's normal value.
+              </div>
+
+              <div className="creator-custom-text-grid">
+                <label>
+                  Title text
+                  <input
+                    className="creator-custom-text-control"
+                    value={settings.custom_label_text ?? ""}
+                    onChange={(event) =>
+                      setSettings({
+                        ...settings,
+                        custom_label_text:
+                          event.target.value.slice(0, 48),
+                      })
+                    }
+                    maxLength={48}
+                    placeholder="Use normal link title"
+                  />
+                </label>
+
+                <label>
+                  Message text
+                  <textarea
+                    className="creator-custom-text-control"
+                    value={settings.custom_url_text ?? ""}
+                    onChange={(event) =>
+                      setSettings({
+                        ...settings,
+                        custom_url_text:
+                          event.target.value.slice(0, 72),
+                      })
+                    }
+                    maxLength={72}
+                    rows={3}
+                    placeholder="Use the normal link URL, or write a short message"
+                  />
+                </label>
+              </div>
+
+              <div className="creator-custom-text-note">
+                This changes only what viewers see in the overlay. It does not
+                change the actual NupHub link or redirect destination.
+              </div>
+
+              {!creator && (
+                <div className="paid-preview-note creator">
+                  You can preview Custom Text here. Upgrade to Creator to save
+                  it to the OBS overlay.
+                </div>
+              )}
+            </div>
+          </details>
+
           {message && <div className="form-success">{message}</div>}
         </div>
+
+
 
         <div className="panel overlay-preview-panel sticky-overlay-preview">
           <div className="panel-head overlay-preview-head">

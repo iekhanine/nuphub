@@ -350,3 +350,56 @@
 .nh-qr-tile rect {
   shape-rendering: crispEdges;
 }
+
+
+/* ==========================================================
+   OBS PIXEL-CRISP RENDERING — V16
+   ========================================================== */
+
+/*
+  Important: Browser Source should be exactly 560 x 144.
+  Do not scale this SVG with CSS. Let OBS render the source at 1:1.
+*/
+.nh-svg-page,
+.nh-svg-wrap {
+  width: 560px !important;
+  height: 144px !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.nh-svg-wrap {
+  transform: none !important;
+  zoom: 1 !important;
+}
+
+.nh-svg-overlay {
+  display: block;
+  width: 560px !important;
+  height: 144px !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none !important;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+/*
+  QR must never inherit blur, glow, transition filters or transforms.
+*/
+.nh-qr-tile,
+.nh-qr-tile * {
+  filter: none !important;
+  transform: none !important;
+}
+
+.nh-qr-tile rect {
+  shape-rendering: crispEdges !important;
+}
+
+/*
+  Prevent subpixel interpolation from CSS transitions on the QR.
+*/
+.nh-qr-tile {
+  vector-effect: non-scaling-stroke;
+}

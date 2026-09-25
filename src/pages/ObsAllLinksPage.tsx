@@ -8,6 +8,7 @@ import "../styles/obs-all-links.css";
 
 export default function ObsAllLinksPage() {
   const { handle = "" } = useParams();
+
   const [overlay, setOverlay] =
     useState<PublicAllLinksOverlay | null>(null);
 
@@ -27,9 +28,14 @@ export default function ObsAllLinksPage() {
     async function load() {
       try {
         const value = await getPublicAllLinksOverlay(handle);
-        if (active) setOverlay(value);
+
+        if (active) {
+          setOverlay(value);
+        }
       } catch {
-        if (active) setOverlay(null);
+        if (active) {
+          setOverlay(null);
+        }
       }
     }
 
@@ -45,9 +51,9 @@ export default function ObsAllLinksPage() {
     };
   }, [handle]);
 
-  return (
-    <main className="nh-all-page">
-      {overlay && <AllLinksOverlayRenderer overlay={overlay} />}
-    </main>
-  );
+  if (!overlay) {
+    return null;
+  }
+
+  return <AllLinksOverlayRenderer overlay={overlay} />;
 }

@@ -174,19 +174,30 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
 
   const qrEnabled = Boolean(link?.qr_enabled);
 
-  const label = useMemo(
-    () => truncate(link?.label ?? "", qrEnabled ? 18 : 24),
-    [link?.label, qrEnabled],
-  );
+  const label = useMemo(() => {
+    const source =
+      effectiveSettings.custom_label_text?.trim() ||
+      link?.label ||
+      "";
 
-  const url = useMemo(
-    () =>
-      truncate(
-        link ? `nuphub.com/${link.slug}` : "",
-        qrEnabled ? 27 : 38,
-      ),
-    [link, qrEnabled],
-  );
+    return truncate(source, qrEnabled ? 18 : 24);
+  }, [
+    effectiveSettings.custom_label_text,
+    link?.label,
+    qrEnabled,
+  ]);
+
+  const url = useMemo(() => {
+    const source =
+      effectiveSettings.custom_url_text?.trim() ||
+      (link ? `nuphub.com/${link.slug}` : "");
+
+    return truncate(source, qrEnabled ? 27 : 38);
+  }, [
+    effectiveSettings.custom_url_text,
+    link,
+    qrEnabled,
+  ]);
 
   if (!link) {
     if (!preview) return null;

@@ -23,11 +23,6 @@ export default function ObsHowToPage() {
   const obsUrl = profile
     ? `${window.location.origin}/obs/${profile.handle}`
     : "";
-
-  const allLinksUrl = profile
-    ? `${window.location.origin}/obs/${profile.handle}/all`
-    : "";
-
   return (
     <DashboardShell handle={profile?.handle}>
       <div className="dash-heading compact-heading">
@@ -135,46 +130,7 @@ export default function ObsHowToPage() {
             </div>
           </div>
 
-          <div className="obs-creator-source">
-            <div>
-              <span className="panel-label">CREATOR · ALL LINKS OVERLAY</span>
-              <strong>Starting Soon / BRB source</strong>
-              <p>
-                Shows every enabled link at once. QR visibility follows each
-                link's QR setting in Link Chain.
-              </p>
-            </div>
 
-            <div className="obs-howto-url">
-              <code>{allLinksUrl || "Loading…"}</code>
-              <button
-                type="button"
-                className="icon-button"
-                disabled={!allLinksUrl}
-                onClick={() =>
-                  void navigator.clipboard.writeText(allLinksUrl)
-                }
-                title="Copy All Links URL"
-              >
-                <Copy size={17} />
-              </button>
-              {allLinksUrl && (
-                <a
-                  className="icon-button"
-                  href={allLinksUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Open All Links source"
-                >
-                  <ExternalLink size={17} />
-                </a>
-              )}
-            </div>
-
-            <p className="obs-creator-size">
-              Recommended Browser Source: <b>960 × 540</b>
-            </p>
-          </div>
 
         </section>
 

@@ -108,6 +108,8 @@ export type OverlaySettings = {
   font_scale: number;
   show_label: boolean;
   show_url: boolean;
+  custom_label_text: string | null;
+  custom_url_text: string | null;
   updated_at: string;
 };
 
@@ -188,6 +190,8 @@ export type PublicStreamer = {
     font_scale: number;
     show_label: boolean;
     show_url: boolean;
+    custom_label_text: string | null;
+    custom_url_text: string | null;
   };
   links: PublicOverlayLink[];
 };

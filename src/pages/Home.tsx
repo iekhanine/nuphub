@@ -64,7 +64,9 @@ export default function Home() {
           </h1>
 
           <p>
-            Short URLs your viewers can type. OBS overlays that show them live.
+            Short URLs viewers can type. 
+            <br /><br />
+            OBS overlay that show them live.
           </p>
 
           <div className="hero-actions">
@@ -85,14 +87,6 @@ export default function Home() {
             ) : null}
           </div>
 
-          <div className="hero-tags">
-            <span>Discord</span>
-            <span>Merch</span>
-            <span>YouTube</span>
-            <span>Socials</span>
-            <span>Sponsors</span>
-            <span>Anything</span>
-          </div>
         </div>
 
         <div className="hero-visual">

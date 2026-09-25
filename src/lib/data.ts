@@ -226,6 +226,23 @@ export async function saveOverlaySettings(
 }
 
 
+export async function setCreatorCustomText(input: {
+  customLabelText: string | null;
+  customUrlText: string | null;
+}) {
+  const { data, error } = await supabase.rpc(
+    "nuphub_set_creator_custom_text",
+    {
+      p_custom_label_text: input.customLabelText,
+      p_custom_url_text: input.customUrlText,
+    },
+  );
+
+  if (error) throw error;
+  return data as OverlaySettings;
+}
+
+
 export async function getOverlayPresets() {
   const userId = await currentUserId();
 
