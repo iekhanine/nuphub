@@ -1,0 +1,382 @@
+/* ==========================================================
+   NUPHUB CREATOR CSS TEXT EFFECTS
+   Source effect code supplied by the user.
+   These are real HTML/CSS effects rendered by Chromium.
+   ========================================================== */
+
+.nh-fx-root {
+  --ink: currentColor;
+  --ink-2: #FF4FD8;
+  --ink-3: #4FF8FF;
+
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+
+  color: inherit;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.nh-fx-root,
+.nh-fx-root * {
+  box-sizing: border-box;
+}
+
+/* 02 Glitchcore — RGB channel-split glitch with sliced jumps */
+.fx-glitch {
+  position: relative;
+  font: 600 30px/1.1 "JetBrains Mono", monospace;
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+.fx-glitch::before,
+.fx-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+}
+.fx-glitch::before {
+  color: var(--ink-2);
+  clip-path: inset(0 0 55% 0);
+  animation: fx-glitch-a 2.6s steps(1) infinite;
+}
+.fx-glitch::after {
+  color: var(--ink-3);
+  clip-path: inset(45% 0 0 0);
+  animation: fx-glitch-b 2.6s steps(1) infinite;
+}
+@keyframes fx-glitch-a {
+  0%, 12%, 20%, 55%, 100% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  13% {
+    transform: translate(-5px, -2px);
+    opacity: .9;
+  }
+  16% {
+    transform: translate(4px, 1px);
+    opacity: .9;
+  }
+  48% {
+    transform: translate(-3px, 2px);
+    opacity: .9;
+  }
+  51% {
+    transform: translate(2px, -1px);
+    opacity: .9;
+  }
+}
+@keyframes fx-glitch-b {
+  0%, 14%, 22%, 60%, 100% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  15% {
+    transform: translate(5px, 2px);
+    opacity: .9;
+  }
+  18% {
+    transform: translate(-4px, -1px);
+    opacity: .9;
+  }
+  52% {
+    transform: translate(3px, -2px);
+    opacity: .9;
+  }
+  56% {
+    transform: translate(-2px, 1px);
+    opacity: .9;
+  }
+}
+
+/* 03 Teletype — typewriter with blinking caret */
+.fx-typewriter {
+  font: 600 24px/1.2 "JetBrains Mono", monospace;
+  letter-spacing: 0;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  width: var(--fx-chars, 10ch);
+  border-right: .55ch solid var(--ink-2);
+  animation:
+    fx-type 3.6s steps(var(--fx-steps, 10)) infinite,
+    fx-caret .65s steps(1) infinite;
+}
+@keyframes fx-type {
+  0%, 8% {
+    width: 0;
+  }
+  55%, 100% {
+    width: var(--fx-chars, 10ch);
+  }
+}
+@keyframes fx-caret {
+  50% {
+    border-color: transparent;
+  }
+}
+
+/* 11 Redactor — a scanning bar sweeps the word */
+.fx-scanner {
+  position: relative;
+  font: 600 28px/1.2 "JetBrains Mono", monospace;
+  letter-spacing: .08em;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ink) 25%, transparent) 0 40%,
+      var(--ink) 50%,
+      color-mix(in srgb, var(--ink) 25%, transparent) 60% 100%
+    )
+    0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    fx-scan-glow 2.6s ease-in-out infinite alternate;
+}
+.fx-scanner::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  left: 0;
+  width: 3px;
+  background: var(--ink-2);
+  box-shadow: 0 0 14px var(--ink-2);
+  animation:
+    fx-scan-bar 2.6s ease-in-out infinite alternate;
+}
+@keyframes fx-scan-glow {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+@keyframes fx-scan-bar {
+  0% {
+    left: 0;
+    transform: translateX(0);
+  }
+  100% {
+    left: 100%;
+    transform: translateX(-100%);
+  }
+}
+
+/* 13 Echo-Verse — ghost copies ripple outward */
+.fx-echo {
+  position: relative;
+  font: 600 32px/1.1 "JetBrains Mono", monospace;
+  letter-spacing: .12em;
+  color: var(--ink);
+}
+.fx-echo::before,
+.fx-echo::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  animation: fx-echo 2s ease-out infinite;
+}
+.fx-echo::before {
+  color: var(--ink-2);
+}
+.fx-echo::after {
+  color: var(--ink-3);
+  animation-delay: 1s;
+}
+@keyframes fx-echo {
+  0% {
+    opacity: .8;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+    filter: blur(3px);
+  }
+}
+
+/* 21 Pop-Riot — letters leap with a hard comic-book drop shadow */
+.fx-pop {
+  font: 600 34px/1.1 "JetBrains Mono", monospace;
+  letter-spacing: .04em;
+  color: var(--ink);
+}
+.fx-pop b {
+  font-weight: inherit;
+  display: inline-block;
+  animation:
+    fx-pop 1.5s cubic-bezier(.3, 1.6, .4, 1) infinite;
+  animation-delay: calc(var(--i) * .09s);
+}
+@keyframes fx-pop {
+  0%, 55%, 100% {
+    transform: translateY(0);
+    text-shadow: 0 0 0 var(--ink-2);
+  }
+  25% {
+    transform: translateY(-12px) rotate(-4deg);
+    text-shadow: 0 12px 0 var(--ink-2);
+  }
+}
+
+/* 22 Limelight — a spotlight sweeps across letters */
+.fx-spotlight {
+  font: 600 26px/1.2 "JetBrains Mono", monospace;
+  letter-spacing: .08em;
+  background:
+    radial-gradient(
+      3.5ch 100% at 50% 50%,
+      var(--ink) 20%,
+      color-mix(in srgb, var(--ink) 14%, transparent) 75%
+    )
+    0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    fx-spotlight 3.4s ease-in-out infinite alternate;
+}
+@keyframes fx-spotlight {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+/* 36 Vapor-Trail — soft neon copies trail behind a drifting word */
+.fx-vapor {
+  position: relative;
+  font: 600 32px/1.1 "JetBrains Mono", monospace;
+  letter-spacing: .16em;
+  color: var(--ink);
+  text-shadow:
+    0 0 12px
+    color-mix(in srgb, var(--ink) 45%, transparent);
+  animation:
+    fx-vapor-main 2.8s ease-in-out infinite;
+}
+.fx-vapor::before,
+.fx-vapor::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter: blur(2px);
+  opacity: .62;
+}
+.fx-vapor::before {
+  color: var(--ink-2);
+  animation:
+    fx-vapor-a 2.8s ease-in-out infinite;
+}
+.fx-vapor::after {
+  color: var(--ink-3);
+  animation:
+    fx-vapor-b 2.8s ease-in-out infinite;
+}
+@keyframes fx-vapor-main {
+  0%, 100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+@keyframes fx-vapor-a {
+  0%, 100% {
+    transform: translate(-10px, 6px) scaleX(1.08);
+    opacity: .22;
+  }
+  50% {
+    transform: translate(-18px, -4px) scaleX(1.22);
+    opacity: .58;
+  }
+}
+@keyframes fx-vapor-b {
+  0%, 100% {
+    transform: translate(10px, -5px) scaleX(1.08);
+    opacity: .2;
+  }
+  50% {
+    transform: translate(18px, 5px) scaleX(1.2);
+    opacity: .56;
+  }
+}
+
+/* NupHub placement wrappers. These do not alter the effect itself. */
+.nh-fx-line {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  overflow: visible;
+}
+
+.nh-fx-line-left {
+  justify-content: flex-start;
+}
+
+.nh-fx-line-center {
+  justify-content: center;
+}
+
+.nh-fx-line-right {
+  justify-content: flex-end;
+}
+
+.nh-fx-library-sample {
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.nh-fx-library-sample .nh-fx-root {
+  transform: scale(.62);
+  transform-origin: center;
+}
+
+
+/* 30 Negative — an inversion bar sweeps the word, flipping letters to their
+   photographic negative via mix-blend-mode: difference */
+.fx-negative {
+  position: relative;
+  font: 600 28px/1.2 "JetBrains Mono", monospace;
+  letter-spacing: .08em;
+  color: var(--ink);
+  padding: .18em .22em;
+}
+
+.fx-negative::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 34%;
+  background: var(--ink);
+  mix-blend-mode: difference;
+  animation: fx-negative 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes fx-negative {
+  0% {
+    left: 0;
+    transform: translateX(0);
+  }
+
+  100% {
+    left: 100%;
+    transform: translateX(-100%);
+  }
+}

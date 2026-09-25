@@ -13,6 +13,11 @@ import { Link } from "react-router-dom";
 import { DashboardShell } from "../components/DashboardShell";
 import { OverlayRenderer } from "../components/OverlayRenderer";
 import {
+  CreatorTextEffect,
+  creatorCssTextEffects,
+  isCreatorCssTextEffect,
+} from "../components/CreatorTextEffect";
+import {
   deleteOverlayPreset,
   getMyEntitlement,
   getMyLinks,
@@ -92,7 +97,7 @@ const fonts: Array<{
 ];
 
 const proEffects: Array<{
-  id: Exclude<OverlayTextEffect, "neon">;
+  id: "none" | "shadow" | "glow" | "outline";
   label: string;
 }> = [
   { id: "none", label: "None" },
@@ -100,6 +105,10 @@ const proEffects: Array<{
   { id: "glow", label: "Glow" },
   { id: "outline", label: "Outline" },
 ];
+
+const creatorTextEffectIds = new Set<OverlayTextEffect>(
+  creatorCssTextEffects.map((effect) => effect.id),
+);
 
 const creatorAnimations: Array<{
   id: OverlayTextAnimation;
@@ -129,13 +138,15 @@ const creatorTransitions: Array<{
   { id: "pop", label: "Pop" },
 ];
 
-type PreviewBackdrop = "dark" | "light" | "green" | "checker";
+type PreviewBackdrop = "checker" | "dark" | "light" | "custom";
 
 
 function presetConfig(settings: OverlaySettings): OverlayPresetConfig {
   return {
     accent_color: settings.accent_color,
     background_color: settings.background_color,
+    glass_left_color: settings.glass_left_color,
+    glass_right_color: settings.glass_right_color,
     text_color: settings.text_color,
     style: settings.style,
     background_opacity: settings.background_opacity,
@@ -159,6 +170,14 @@ function presetConfig(settings: OverlaySettings): OverlayPresetConfig {
 function normalizeSettings(settings: OverlaySettings): OverlaySettings {
   return {
     ...settings,
+    glass_left_color:
+      settings.glass_left_color ??
+      settings.background_color ??
+      "#17101f",
+    glass_right_color:
+      settings.glass_right_color ??
+      settings.accent_color ??
+      "#3b1768",
     text_effect: settings.text_effect ?? "none",
     text_animation: settings.text_animation ?? "none",
     transition_effect: settings.transition_effect ?? "fade",
@@ -191,10 +210,12 @@ export default function OverlaySettingsPage() {
   const [savedSettings, setSavedSettings] = useState<OverlaySettings | null>(null);
   const [upgradePrompt, setUpgradePrompt] = useState<"pro" | "creator" | null>(null);
   const [previewBackdrop, setPreviewBackdrop] =
-    useState<PreviewBackdrop>("dark");
+    useState<PreviewBackdrop>("checker");
+  const [previewCustomColor, setPreviewCustomColor] = useState("#6f4aa8");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [renderScale, setRenderScale] = useState<1 | 2 | 3>(2);
 
   async function refreshEntitlement() {
     const nextEntitlement = await getMyEntitlement();
@@ -272,6 +293,14 @@ export default function OverlaySettingsPage() {
         position: settings.position,
         accent_color: settings.accent_color,
         background_color: settings.background_color ?? "#0a080e",
+        glass_left_color:
+          settings.glass_left_color ??
+          settings.background_color ??
+          "#17101f",
+        glass_right_color:
+          settings.glass_right_color ??
+          settings.accent_color ??
+          "#3b1768",
         text_color: settings.text_color ?? "#ffffff",
         style: settings.style,
         background_opacity: settings.background_opacity ?? 0.94,
@@ -342,6 +371,8 @@ export default function OverlaySettingsPage() {
 
     const proFields: Array<keyof OverlaySettings> = [
       "background_color",
+      "glass_left_color",
+      "glass_right_color",
       "style",
       "accent_bar_side",
       "text_align",
@@ -372,9 +403,18 @@ export default function OverlaySettingsPage() {
           (savedSettings.custom_url_text ?? "")
       );
 
+    const changedCreatorEffect =
+      !!savedSettings &&
+      creatorTextEffectIds.has(settings.text_effect) &&
+      settings.text_effect !== savedSettings.text_effect;
+
     const changedCreatorFeature =
       !creator &&
-      (linkChainChanged() || changedCreatorText);
+      (
+        linkChainChanged() ||
+        changedCreatorText ||
+        changedCreatorEffect
+      );
 
     // Keep the save atomic. Do not partially save allowed settings
     // when the current preview also contains locked-tier changes.
@@ -405,6 +445,8 @@ export default function OverlaySettingsPage() {
         ...(pro
           ? {
               background_color: settings.background_color,
+              glass_left_color: settings.glass_left_color,
+              glass_right_color: settings.glass_right_color,
               style: settings.style,
               accent_bar_side: settings.accent_bar_side,
               text_align: settings.text_align,
@@ -545,8 +587,17 @@ export default function OverlaySettingsPage() {
 
 
   const obsUrl = profile
-    ? `${window.location.origin}/obs/${profile.handle}`
+    ? `${window.location.origin}/obs/${profile.handle}?scale=${renderScale}`
     : "";
+
+  const obsRenderWidth = 560 * renderScale;
+  const obsRenderHeight = 144 * renderScale;
+  const obsDisplayScale =
+    renderScale === 1
+      ? "100%"
+      : renderScale === 2
+        ? "50%"
+        : "33.333%";
 
   const allLinksUrl = profile
     ? `${window.location.origin}/obs/${profile.handle}/all`
@@ -617,6 +668,50 @@ export default function OverlaySettingsPage() {
               >
                 <ExternalLink size={17} />
               </a>
+            </div>
+
+            <div className="obs-render-quality">
+              <label htmlFor="obs-render-quality">
+                <span>
+                  <strong>Render Quality</strong>
+                  <small>
+                    Higher quality gives OBS more pixels to downsample.
+                  </small>
+                </span>
+
+                <select
+                  id="obs-render-quality"
+                  value={renderScale}
+                  onChange={(event) =>
+                    setRenderScale(
+                      Number(event.target.value) as 1 | 2 | 3,
+                    )
+                  }
+                >
+                  <option value={1}>Standard 1x</option>
+                  <option value={2}>High 2x</option>
+                  <option value={3}>Ultra 3x</option>
+                </select>
+              </label>
+
+              <div className="obs-render-dimensions">
+                <span>
+                  Browser Source:
+                  <strong>
+                    {obsRenderWidth} × {obsRenderHeight}
+                  </strong>
+                </span>
+                <span>
+                  Display scale:
+                  <strong>{obsDisplayScale}</strong>
+                </span>
+              </div>
+
+              <p>
+                High 2x is recommended. Set the Browser Source to the exact
+                dimensions above, then scale the source in OBS to the listed
+                display scale.
+              </p>
             </div>
           </div>
 
@@ -845,6 +940,85 @@ export default function OverlaySettingsPage() {
                   ))}
                 </div>
               </label>
+
+              {settings.style === "glass" && (
+                <div className="glass-fade-settings">
+                  <div className="glass-fade-heading">
+                    <strong>Glass Fade</strong>
+                    <small>Blend two colors across the button.</small>
+                  </div>
+
+                  <div className="overlay-color-grid">
+                    <label>
+                      Left fade
+                      <div className="color-control">
+                        <input
+                          className="color-picker-input"
+                          type="color"
+                          value={settings.glass_left_color}
+                          onChange={(event) =>
+                            setSettings({
+                              ...settings,
+                              glass_left_color: event.target.value,
+                            })
+                          }
+                          aria-label="Glass left fade color"
+                        />
+                        <span
+                          className="color-swatch"
+                          style={{ backgroundColor: settings.glass_left_color }}
+                        />
+                        <input
+                          className="color-hex-input"
+                          value={settings.glass_left_color}
+                          maxLength={7}
+                          onChange={(event) =>
+                            setSettings({
+                              ...settings,
+                              glass_left_color: event.target.value,
+                            })
+                          }
+                          aria-label="Glass left fade hex value"
+                        />
+                      </div>
+                    </label>
+
+                    <label>
+                      Right fade
+                      <div className="color-control">
+                        <input
+                          className="color-picker-input"
+                          type="color"
+                          value={settings.glass_right_color}
+                          onChange={(event) =>
+                            setSettings({
+                              ...settings,
+                              glass_right_color: event.target.value,
+                            })
+                          }
+                          aria-label="Glass right fade color"
+                        />
+                        <span
+                          className="color-swatch"
+                          style={{ backgroundColor: settings.glass_right_color }}
+                        />
+                        <input
+                          className="color-hex-input"
+                          value={settings.glass_right_color}
+                          maxLength={7}
+                          onChange={(event) =>
+                            setSettings({
+                              ...settings,
+                              glass_right_color: event.target.value,
+                            })
+                          }
+                          aria-label="Glass right fade hex value"
+                        />
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              )}
 
               <label>
                 Background color
@@ -1253,6 +1427,56 @@ export default function OverlaySettingsPage() {
             <summary className="overlay-accordion-summary">
               <div>
                 <span className="overlay-tier-badge creator">CREATOR</span>
+                <strong>Text Effects Library</strong>
+              </div>
+              <span className="overlay-accordion-hint">
+                {creator ? "Active" : "Preview"}
+              </span>
+            </summary>
+
+            <div className="overlay-accordion-body creator-effects-body">
+              <div className="creator-effects-library">
+                {creatorCssTextEffects.map((effect) => (
+                  <button
+                    type="button"
+                    className={`creator-effect-card${
+                      settings.text_effect === effect.id ? " active" : ""
+                    }`}
+                    onClick={() =>
+                      setSettings({
+                        ...settings,
+                        text_effect:
+                          settings.text_effect === effect.id
+                            ? "none"
+                            : effect.id,
+                        text_animation: "none",
+                      })
+                    }
+                    key={effect.id}
+                  >
+                    <div className="nh-fx-library-sample">
+                      <CreatorTextEffect
+                        effect={effect.id}
+                        text="NUPHUB"
+                      />
+                    </div>
+                    <strong>{effect.label}</strong>
+                  </button>
+                ))}
+              </div>
+
+              {!creator && (
+                <div className="paid-preview-note creator">
+                  Preview these effects now. Upgrade to Creator to save and use them.
+                </div>
+              )}
+            </div>
+          </details>
+
+          <details className="panel settings-panel overlay-accordion creator-settings-accordion">
+            <summary className="overlay-accordion-summary">
+              <div>
+                <span className="overlay-tier-badge creator">CREATOR</span>
                 <strong>Saved Overlays</strong>
               </div>
               <span className="overlay-accordion-hint">
@@ -1631,7 +1855,7 @@ export default function OverlaySettingsPage() {
           </div>
 
           <div className="preview-backdrop-tabs">
-            {(["dark", "light", "green", "checker"] as PreviewBackdrop[]).map(
+            {(["checker", "dark", "light"] as PreviewBackdrop[]).map(
               (backdrop) => (
                 <button
                   type="button"
@@ -1643,10 +1867,33 @@ export default function OverlaySettingsPage() {
                 </button>
               ),
             )}
+
+            <label
+              className={`preview-custom-backdrop${
+                previewBackdrop === "custom" ? " active" : ""
+              }`}
+            >
+              <span>custom</span>
+              <input
+                type="color"
+                value={previewCustomColor}
+                onChange={(event) => {
+                  setPreviewCustomColor(event.target.value);
+                  setPreviewBackdrop("custom");
+                }}
+                onClick={() => setPreviewBackdrop("custom")}
+                aria-label="Custom preview background color"
+              />
+            </label>
           </div>
 
           <div
             className={`overlay-preview-stage overlay-preview-stage-clean preview-backdrop-${previewBackdrop}`}
+            style={
+              previewBackdrop === "custom"
+                ? { background: previewCustomColor }
+                : undefined
+            }
           >
             <OverlayRenderer streamer={streamer} preview />
           </div>

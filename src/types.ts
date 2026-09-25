@@ -44,7 +44,15 @@ export type OverlayTextEffect =
   | "shadow"
   | "glow"
   | "outline"
-  | "neon";
+  | "neon"
+  | "glitch"
+  | "typewriter"
+  | "scanner"
+  | "echo"
+  | "pop"
+  | "spotlight"
+  | "vapor"
+  | "negative";
 
 export type OverlayTextAnimation =
   | "none"
@@ -91,6 +99,8 @@ export type OverlaySettings = {
   position: OverlayPosition;
   accent_color: string;
   background_color: string;
+  glass_left_color: string;
+  glass_right_color: string;
   text_color: string;
   style: OverlayStyle;
   background_opacity: number;
@@ -117,6 +127,8 @@ export type OverlayPresetConfig = Pick<
   OverlaySettings,
   | "accent_color"
   | "background_color"
+  | "glass_left_color"
+  | "glass_right_color"
   | "text_color"
   | "style"
   | "background_opacity"
@@ -173,6 +185,8 @@ export type PublicStreamer = {
     position: OverlayPosition;
     accent_color: string;
     background_color: string;
+    glass_left_color: string;
+    glass_right_color: string;
     text_color: string;
     style: OverlayStyle;
     background_opacity: number;

@@ -192,6 +192,8 @@ export async function saveOverlaySettings(
       | "position"
       | "accent_color"
       | "background_color"
+      | "glass_left_color"
+      | "glass_right_color"
       | "text_color"
       | "style"
       | "background_opacity"

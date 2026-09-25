@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useParams } from "react-router-dom";
 
 import { OverlayRenderer } from "../components/OverlayRenderer";
@@ -6,9 +6,27 @@ import { getPublicStreamer } from "../lib/data";
 import type { PublicStreamer } from "../types";
 import "../styles/obs-route.css";
 
+function resolveRenderScale(): 1 | 2 | 3 {
+  const value = new URLSearchParams(window.location.search).get("scale");
+
+  if (value === "1") return 1;
+  if (value === "3") return 3;
+
+  return 2;
+}
+
 export default function ObsOverlayPage() {
   const { handle = "" } = useParams();
   const [streamer, setStreamer] = useState<PublicStreamer | null>(null);
+
+  const renderScale = resolveRenderScale();
+  const renderWidth = 560 * renderScale;
+  const renderHeight = 144 * renderScale;
+
+  const renderSizeStyle = {
+    "--nh-render-width": `${renderWidth}px`,
+    "--nh-render-height": `${renderHeight}px`,
+  } as CSSProperties;
 
   useEffect(() => {
     document.documentElement.classList.add("nh-obs-transparent-route");
@@ -45,8 +63,13 @@ export default function ObsOverlayPage() {
   }, [handle]);
 
   return (
-    <main className="nh-svg-page">
-      {streamer && <OverlayRenderer streamer={streamer} />}
+    <main className="nh-svg-page" style={renderSizeStyle}>
+      {streamer && (
+        <OverlayRenderer
+          streamer={streamer}
+          renderScale={renderScale}
+        />
+      )}
     </main>
   );
 }

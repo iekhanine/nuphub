@@ -2973,3 +2973,327 @@ details.creator-settings-accordion,
   background: #0b090e !important;
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.08) !important;
 }
+
+
+/* ==========================================================
+   OBS RENDER QUALITY SELECTOR - V18.1
+   ========================================================== */
+
+.obs-render-quality {
+  display: grid;
+  gap: 12px;
+
+  margin-top: 12px;
+  padding: 14px 16px 16px;
+
+  border: 1px solid #342d3b;
+  border-radius: 10px;
+
+  background: #0b090e;
+  box-sizing: border-box;
+}
+
+.obs-render-quality > label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  align-items: center;
+  gap: 14px;
+}
+
+.obs-render-quality > label > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.obs-render-quality > label strong {
+  color: #e7deed;
+  font-size: 12px;
+}
+
+.obs-render-quality > label small {
+  color: #8f8498;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.obs-render-quality select {
+  width: 100%;
+  min-height: 38px;
+
+  padding: 9px 11px;
+
+  border: 1px solid #342d3b;
+  border-radius: 8px;
+
+  background: #111017;
+  color: #ddd5e4;
+
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.3;
+
+  box-sizing: border-box;
+}
+
+.obs-render-quality select:hover {
+  border-color: #43384f;
+}
+
+.obs-render-quality select:focus {
+  border-color: #5c4a6a;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.08);
+}
+
+.obs-render-dimensions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+
+.obs-render-dimensions span {
+  display: grid;
+  gap: 3px;
+
+  padding: 10px 11px;
+
+  border: 1px solid #2f2936;
+  border-radius: 8px;
+
+  background: #0d0b10;
+
+  color: #92879b;
+  font-size: 11px;
+}
+
+.obs-render-dimensions strong {
+  color: #dcd3e3;
+  font-size: 12px;
+}
+
+.obs-render-quality > p {
+  margin: 0;
+  padding-top: 2px;
+
+  color: #82778b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (max-width: 620px) {
+  .obs-render-quality {
+    padding: 12px;
+  }
+
+  .obs-render-quality > label {
+    grid-template-columns: 1fr;
+  }
+
+  .obs-render-dimensions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================
+   LIVE PREVIEW BACKDROPS - V18.2
+   ========================================================== */
+
+.preview-backdrop-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-custom-backdrop {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 6px 9px;
+  border: 1px solid #342d3b;
+  border-radius: 7px;
+  background: #0b090e;
+  color: #9d92a5;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.preview-custom-backdrop:hover {
+  border-color: #4a3f55;
+  color: #d8cfdf;
+}
+
+.preview-custom-backdrop.active {
+  border-color: #6d5681;
+  background: #15101b;
+  color: #eadffd;
+}
+
+.preview-custom-backdrop input[type="color"] {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.preview-custom-backdrop input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.preview-custom-backdrop input[type="color"]::-webkit-color-swatch {
+  border: 1px solid #5a4a66;
+  border-radius: 4px;
+}
+
+.overlay-preview-stage.preview-backdrop-custom {
+  background-image: none !important;
+}
+
+
+/* ==========================================================
+   LIVE PREVIEW BACKDROP BUTTON ALIGNMENT - V18.2.1
+   ========================================================== */
+
+.preview-backdrop-tabs {
+  justify-content: center;
+  align-items: center;
+  min-height: 46px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+.preview-backdrop-tabs button,
+.preview-custom-backdrop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  margin: 0;
+  line-height: 1;
+}
+
+
+/* Glass Fade + Creator Text Effects Library */
+.glass-fade-settings {
+  display:grid; gap:10px; padding:12px;
+  border:1px solid #342d3b; border-radius:10px; background:#0b090e;
+}
+.glass-fade-heading { display:grid; gap:3px; }
+.glass-fade-heading strong { color:#e4dbe9; font-size:11px; }
+.glass-fade-heading small { color:#84798c; font-size:10px; line-height:1.4; }
+
+
+
+
+/* ==========================================================
+   CREATOR CSS TEXT EFFECT LIBRARY - V20
+   ========================================================== */
+
+.creator-effects-body {
+  padding: 12px 14px 14px !important;
+}
+
+.creator-effects-copy {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 11px;
+}
+
+.creator-effects-copy strong {
+  color: #e6ddeb;
+  font-size: 11px;
+}
+
+.creator-effects-copy span {
+  color: #887d91;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.creator-effects-library {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  max-height: 390px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+
+  padding: 2px 5px 2px 2px;
+  scrollbar-width: thin;
+  scrollbar-color: #55455f #0a080d;
+}
+
+.creator-effects-library::-webkit-scrollbar {
+  width: 8px;
+}
+
+.creator-effects-library::-webkit-scrollbar-track {
+  background: #0a080d;
+  border-radius: 8px;
+}
+
+.creator-effects-library::-webkit-scrollbar-thumb {
+  background: #55455f;
+  border: 2px solid #0a080d;
+  border-radius: 8px;
+}
+
+.creator-effect-card {
+  display: grid;
+  gap: 5px;
+
+  min-width: 0;
+  min-height: 92px;
+  padding: 9px 10px;
+
+  border: 1px solid #342d3b;
+  border-radius: 9px;
+
+  background: #0b090e;
+  color: #d8cfdf;
+
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.creator-effect-card:hover {
+  border-color: #51435d;
+  background: #0f0c13;
+}
+
+.creator-effect-card.active {
+  border-color: #765a8c;
+  background: #120d18;
+  box-shadow:
+    0 0 0 1px rgba(139, 92, 246, .14) inset;
+}
+
+.creator-effect-card > strong {
+  color: #9f93a8;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.creator-effect-card.active > strong {
+  color: #e8d9f4;
+}
+
+@media (max-width: 620px) {
+  .creator-effects-library {
+    grid-template-columns: 1fr;
+    max-height: 440px;
+  }
+}

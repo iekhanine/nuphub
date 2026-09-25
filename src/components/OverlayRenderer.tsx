@@ -6,6 +6,11 @@ import {
 } from "react";
 import QRCode from "qrcode";
 
+import {
+  CreatorTextEffect,
+  isCreatorCssTextEffect,
+} from "./CreatorTextEffect";
+
 import type {
   OverlayFontFamily,
   PublicStreamer,
@@ -15,6 +20,7 @@ import "../styles/obs-svg.css";
 type Props = {
   streamer: PublicStreamer;
   preview?: boolean;
+  renderScale?: 1 | 2 | 3;
 };
 
 type TransitionPhase = "idle" | "exit" | "enter";
@@ -91,13 +97,26 @@ function chooseWeightedNext(
   return firstPick;
 }
 
-export function OverlayRenderer({ streamer, preview = false }: Props) {
+export function OverlayRenderer({
+  streamer,
+  preview = false,
+  renderScale = 1,
+}: Props) {
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<TransitionPhase>("idle");
   const [qrMatrix, setQrMatrix] = useState<{
     size: number;
     data: boolean[];
   } | null>(null);
+
+  const effectiveRenderScale = preview ? 1 : renderScale;
+  const renderWidth = VIEW_WIDTH * effectiveRenderScale;
+  const renderHeight = VIEW_HEIGHT * effectiveRenderScale;
+
+  const renderSizeStyle = {
+    "--nh-render-width": `${renderWidth}px`,
+    "--nh-render-height": `${renderHeight}px`,
+  } as CSSProperties;
 
   const links = streamer.links;
   const link = links[index] ?? null;
@@ -203,12 +222,15 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
     if (!preview) return null;
 
     return (
-      <div className="nh-svg-wrap nh-svg-preview">
+      <div
+        className="nh-svg-wrap nh-svg-preview"
+        style={renderSizeStyle}
+      >
         <svg
           className="nh-svg-overlay"
           viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-          width="100%"
-          height="100%"
+          width={renderWidth}
+          height={renderHeight}
         >
           <g transform={`translate(${OFFSET_X} ${OFFSET_Y})`}>
             <rect
@@ -240,6 +262,8 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
   const settings = effectiveSettings;
   const accent = settings.accent_color || "#8b5cf6";
   const background = settings.background_color || "#0a080e";
+  const glassLeft = settings.glass_left_color || background || "#17101f";
+  const glassRight = settings.glass_right_color || accent || "#3b1768";
   const textColor = settings.text_color || "#ffffff";
   const style = settings.style;
   const backgroundOpacity = clamp(settings.background_opacity, 0, 1, 0.94);
@@ -260,7 +284,9 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
 
   const textAreaLeft = 28;
   const textAreaRight = qrEnabled ? 398 : 492;
-  const textAreaCenter = (textAreaLeft + textAreaRight) / 2;
+  const textAreaCenter = Math.round(
+    (textAreaLeft + textAreaRight) / 2,
+  );
 
   const textAnchor =
     textAlign === "center"
@@ -279,10 +305,10 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
   const labelY = settings.show_url ? (qrEnabled ? 38 : 40) : 60;
   const urlY = settings.show_label ? (qrEnabled ? 66 : 70) : 62;
 
-  const labelFontSize = (qrEnabled ? 9.5 : 12) * fontScale;
-  const urlFontSize = (qrEnabled ? 17 : 25) * fontScale;
-  const labelLetterSpacing = qrEnabled ? 0.7 : 1.2;
-  const urlLetterSpacing = qrEnabled ? -0.25 : -0.5;
+  const labelFontSize = (qrEnabled ? 10 : 12) * fontScale;
+  const urlFontSize = (qrEnabled ? 18 : 25) * fontScale;
+  const labelLetterSpacing = qrEnabled ? 1 : 1;
+  const urlLetterSpacing = qrEnabled ? 0 : 0;
 
   const staticFilter =
     textEffect === "shadow"
@@ -312,6 +338,24 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
     "--nh-neon-secondary": neonSecondary,
   } as CSSProperties;
 
+  const creatorCssEffect =
+    isCreatorCssTextEffect(textEffect)
+      ? textEffect
+      : null;
+
+  const resolvedMotionClass = motionClass;
+
+  const creatorTextStyle = {
+    color: textColor,
+  } as CSSProperties;
+
+  const creatorLineClass =
+    textAlign === "center"
+      ? "nh-fx-line nh-fx-line-center"
+      : textAlign === "right"
+        ? "nh-fx-line nh-fx-line-right"
+        : "nh-fx-line nh-fx-line-left";
+
   const wrapClass = [
     "nh-svg-wrap",
     preview ? "nh-svg-preview" : "",
@@ -328,21 +372,28 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
     "M 502 10 Q 512 10 512 20 L 512 84 Q 512 94 502 94";
 
   return (
-    <div className={wrapClass}>
+    <div className={wrapClass} style={renderSizeStyle}>
       <svg
         className="nh-svg-overlay"
         viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-        width="100%"
-        height="100%"
+        width={renderWidth}
+        height={renderHeight}
         role="img"
         aria-label={`${label} ${url}`}
-        preserveAspectRatio="xMinYMid meet"
+        preserveAspectRatio="xMinYMin meet"
       >
         <defs>
-          <linearGradient id="nhGlass" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity=".12" />
+          <linearGradient id="nhGlassFade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor={glassLeft} stopOpacity=".96" />
+            <stop offset="48%" stopColor={background} stopOpacity=".90" />
+            <stop offset="100%" stopColor={glassRight} stopOpacity=".96" />
+          </linearGradient>
+          <linearGradient id="nhGlassHighlight" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity=".25" />
+            <stop offset="36%" stopColor="#ffffff" stopOpacity=".08" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
+
 
           <filter
             id="nhShadow"
@@ -409,21 +460,25 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
                 width="504"
                 height="84"
                 rx="10"
-                fill={background}
-                fillOpacity={backgroundOpacity}
-                stroke="rgba(255,255,255,.13)"
+                fill={style === "glass" ? "url(#nhGlassFade)" : background}
+                fillOpacity={
+                  style === "glass"
+                    ? Math.min(0.96, Math.max(0.72, backgroundOpacity))
+                    : backgroundOpacity
+                }
+                stroke={
+                  style === "glass"
+                    ? "rgba(255,255,255,.24)"
+                    : "rgba(255,255,255,.13)"
+                }
               />
 
               {style === "glass" && (
-                <rect
-                  x="9"
-                  y="11"
-                  width="502"
-                  height="82"
-                  rx="9"
-                  fill="url(#nhGlass)"
-                  opacity={Math.min(0.34, backgroundOpacity * 0.34)}
-                />
+                <>
+                  <rect x="9" y="11" width="502" height="82" rx="9" fill="url(#nhGlassHighlight)" opacity=".72" />
+                  <path d="M 22 14 H 498" stroke="rgba(255,255,255,.30)" strokeWidth="1" strokeLinecap="round" />
+                  <path d="M 22 90 H 498" stroke="rgba(255,255,255,.06)" strokeWidth="1" strokeLinecap="round" />
+                </>
               )}
             </g>
           )}
@@ -449,66 +504,122 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
           )}
 
           <g
-            className={`nh-text-motion ${motionClass}`}
+            className={`nh-text-motion ${resolvedMotionClass}`}
             style={effectStyle}
           >
-            <g className={`nh-text-visual ${neonClass}`}>
-              {settings.show_label && (
-                <text
-                  x={textX}
-                  y={labelY}
-                  fill={textColor}
-                  fillOpacity=".72"
-                  fontSize={labelFontSize}
-                  fontWeight="900"
-                  letterSpacing={labelLetterSpacing}
-                  fontFamily={fontFamily}
-                  textAnchor={textAnchor}
-                  filter={staticFilter}
-                  {...outlineProps}
-                >
-                  {label.toUpperCase()}
-                </text>
-              )}
+            {creatorCssEffect ? (
+              <>
+                {settings.show_label && (
+                  <foreignObject
+                    x={textAreaLeft}
+                    y={settings.show_url ? 8 : 25}
+                    width={textAreaRight - textAreaLeft}
+                    height={settings.show_url ? 38 : 58}
+                    overflow="visible"
+                  >
+                    <div
+                      className={creatorLineClass}
+                    >
+                      <CreatorTextEffect
+                        effect={creatorCssEffect}
+                        text={label.toUpperCase()}
+                        style={creatorTextStyle}
+                      />
+                    </div>
+                  </foreignObject>
+                )}
 
-              {settings.show_url && (
-                <text
-                  x={textX}
-                  y={urlY}
-                  fill={textColor}
-                  fontSize={urlFontSize}
-                  fontWeight="800"
-                  letterSpacing={urlLetterSpacing}
-                  fontFamily={fontFamily}
-                  textAnchor={textAnchor}
-                  filter={staticFilter}
-                  {...outlineProps}
-                >
-                  {url}
-                </text>
-              )}
-            </g>
+                {settings.show_url && (
+                  <foreignObject
+                    x={textAreaLeft}
+                    y={settings.show_label ? 43 : 24}
+                    width={textAreaRight - textAreaLeft}
+                    height={settings.show_label ? 47 : 60}
+                    overflow="visible"
+                  >
+                    <div
+                      className={creatorLineClass}
+                    >
+                      <CreatorTextEffect
+                        effect={creatorCssEffect}
+                        text={url}
+                        style={creatorTextStyle}
+                      />
+                    </div>
+                  </foreignObject>
+                )}
+              </>
+            ) : (
+              <g className={`nh-text-visual ${neonClass}`}>
+                {settings.show_label && (
+                  <text
+                    x={textX}
+                    y={labelY}
+                    fill={textColor}
+                    fillOpacity=".72"
+                    fontSize={labelFontSize}
+                    fontWeight="900"
+                    letterSpacing={labelLetterSpacing}
+                    fontFamily={fontFamily}
+                    textAnchor={textAnchor}
+                    filter={staticFilter}
+                    {...outlineProps}
+                  >
+                    {label.toUpperCase()}
+                  </text>
+                )}
+
+                {settings.show_url && (
+                  <text
+                    x={textX}
+                    y={urlY}
+                    fill={textColor}
+                    fontSize={urlFontSize}
+                    fontWeight="800"
+                    letterSpacing={urlLetterSpacing}
+                    fontFamily={fontFamily}
+                    textAnchor={textAnchor}
+                    filter={staticFilter}
+                    {...outlineProps}
+                  >
+                    {url}
+                  </text>
+                )}
+              </g>
+            )}
           </g>
 
           {qrEnabled && qrMatrix && (
             <g className="nh-qr-tile">
               {(() => {
+                /*
+                 * Integer-only QR geometry.
+                 *
+                 * Never divide the fixed tile by module count. That produces
+                 * fractional module widths which Chromium/OBS antialiases.
+                 *
+                 * Instead, choose an integer module size and derive the QR
+                 * canvas from that. Every black square lands exactly on the
+                 * SVG pixel grid.
+                 */
+                const quietModules = 4;
+                const modulePx = 2;
+                const qrModules = qrMatrix.size + quietModules * 2;
+                const qrSize = qrModules * modulePx;
+
                 const tileX = 424;
-                const tileY = 16;
-                const tileSize = 72;
-                const quiet = 4;
-                const totalModules = qrMatrix.size + quiet * 2;
-                const moduleSize = tileSize / totalModules;
+                const tileY = 14;
 
                 return (
                   <>
                     <rect
                       x={tileX}
                       y={tileY}
-                      width={tileSize}
-                      height={tileSize}
-                      rx="7"
+                      width={qrSize}
+                      height={qrSize}
+                      rx="6"
                       fill="#ffffff"
+                      shapeRendering="crispEdges"
                     />
 
                     <g shapeRendering="crispEdges">
@@ -523,10 +634,16 @@ export function OverlayRenderer({ streamer, preview = false }: Props) {
                         return (
                           <rect
                             key={moduleIndex}
-                            x={tileX + (col + quiet) * moduleSize}
-                            y={tileY + (row + quiet) * moduleSize}
-                            width={moduleSize}
-                            height={moduleSize}
+                            x={
+                              tileX +
+                              (col + quietModules) * modulePx
+                            }
+                            y={
+                              tileY +
+                              (row + quietModules) * modulePx
+                            }
+                            width={modulePx}
+                            height={modulePx}
                             fill="#000000"
                           />
                         );

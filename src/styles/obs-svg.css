@@ -403,3 +403,23 @@
 .nh-qr-tile {
   vector-effect: non-scaling-stroke;
 }
+
+
+/* ==========================================================
+   OBS SUPERSAMPLED RENDER SIZE - V18
+   ========================================================== */
+
+.nh-svg-page,
+.nh-svg-wrap,
+.nh-svg-overlay {
+  width: var(--nh-render-width, 560px) !important;
+  height: var(--nh-render-height, 144px) !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.nh-svg-overlay {
+  display: block;
+}
+
+
