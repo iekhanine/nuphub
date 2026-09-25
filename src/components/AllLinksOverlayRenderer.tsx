@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, RadioTower } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import QRCode from "qrcode";
 
 import { Brand } from "./Brand";
@@ -79,13 +79,9 @@ export function AllLinksOverlayRenderer({ overlay }: Props) {
 
       <section className="public-profile-card">
         <div className="public-avatar">
-          {overlay.handle.slice(0, 2).toUpperCase()}
+          {overlay.badge_text?.trim() ||
+            overlay.handle.slice(0, 2).toUpperCase()}
         </div>
-
-        <span className="eyebrow">
-          <RadioTower size={14} />
-          NUPHUB STREAMER
-        </span>
 
         <h1>{overlay.display_name || overlay.handle}</h1>
         <span className="public-handle">@{overlay.handle}</span>

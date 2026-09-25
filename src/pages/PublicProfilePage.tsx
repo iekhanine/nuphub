@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, RadioTower } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
 import { Brand } from "../components/Brand";
@@ -43,12 +43,9 @@ export default function PublicProfilePage() {
 
       <section className="public-profile-card">
         <div className="public-avatar">
-          {streamer.handle.slice(0, 2).toUpperCase()}
+          {streamer.badge_text?.trim() ||
+            streamer.handle.slice(0, 2).toUpperCase()}
         </div>
-        <span className="eyebrow">
-          <RadioTower size={14} />
-          NUPHUB STREAMER
-        </span>
         <h1>{streamer.display_name || streamer.handle}</h1>
         <span className="public-handle">@{streamer.handle}</span>
 

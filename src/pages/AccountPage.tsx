@@ -7,6 +7,8 @@ import {
   getMyAdminRole,
   getMyEntitlement,
   getMyProfile,
+  getOverlaySettings,
+  saveOverlaySettings,
   updateProfile,
 } from "../lib/data";
 import { PLANS } from "../lib/plans";
@@ -19,13 +21,25 @@ export default function AccountPage() {
   const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
   const [adminRole, setAdminRole] = useState<AdminRole | null>(null);
   const [displayName, setDisplayName] = useState("");
+  const [badgeText, setBadgeText] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    Promise.all([getMyProfile(), getMyEntitlement(), getMyAdminRole()]).then(
-      ([value, nextEntitlement, nextAdminRole]) => {
+    Promise.all([
+      getMyProfile(),
+      getMyEntitlement(),
+      getMyAdminRole(),
+      getOverlaySettings(),
+    ]).then(
+      ([
+        value,
+        nextEntitlement,
+        nextAdminRole,
+        overlaySettings,
+      ]) => {
         setProfile(value);
         setDisplayName(value?.display_name ?? "");
+        setBadgeText(overlaySettings.all_links_badge_text ?? "");
         setEntitlement(nextEntitlement);
         setAdminRole(nextAdminRole);
       },
@@ -33,9 +47,15 @@ export default function AccountPage() {
   }, []);
 
   async function save() {
-    const updated = await updateProfile({
-      display_name: displayName.trim() || null,
-    });
+    const [updated] = await Promise.all([
+      updateProfile({
+        display_name: displayName.trim() || null,
+      }),
+      saveOverlaySettings({
+        all_links_badge_text:
+          badgeText.trim() || null,
+      }),
+    ]);
 
     setProfile(updated);
     setMessage("Saved.");
@@ -76,6 +96,32 @@ export default function AccountPage() {
                 placeholder="Your stream name"
                 maxLength={50}
               />
+            </label>
+
+            <label>
+              Badge text
+              <div className="account-badge-row">
+                <input
+                  value={badgeText}
+                  maxLength={4}
+                  placeholder={
+                    profile?.handle.slice(0, 2).toUpperCase() ?? "NH"
+                  }
+                  onChange={(event) =>
+                    setBadgeText(event.target.value)
+                  }
+                />
+
+                <span className="account-badge-preview">
+                  {badgeText.trim() ||
+                    (profile?.handle.slice(0, 2).toUpperCase() ?? "NH")}
+                </span>
+              </div>
+
+              <small>
+                Used on your public link page and All Links overlay.
+                Up to 4 characters.
+              </small>
             </label>
 
             <label>

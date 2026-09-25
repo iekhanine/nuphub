@@ -3297,3 +3297,221 @@ details.creator-settings-accordion,
     max-height: 440px;
   }
 }
+
+
+/* ==========================================================
+   V21 SIZE CONTROLS, PRESET LIBRARY, ALL-LINKS BADGE, RESET
+   ========================================================== */
+
+.overlay-size-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.overlay-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.overlay-reset-everything {
+  border-color: #302a36 !important;
+  background: #100d13 !important;
+  color: #8f8498 !important;
+  box-shadow: none !important;
+}
+
+.overlay-reset-everything:hover {
+  border-color: #463b50 !important;
+  background: #151119 !important;
+  color: #b4a9bd !important;
+}
+
+.creator-preset-library-body {
+  padding: 12px 14px 14px !important;
+}
+
+.creator-built-in-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.creator-built-in-preset {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  min-height: 74px;
+  padding: 10px 11px;
+  border: 1px solid #342d3b;
+  border-radius: 9px;
+  background: #0b090e;
+  color: #d9d2df;
+  text-align: left;
+  cursor: pointer;
+}
+
+.creator-built-in-preset:hover {
+  border-color: #574564;
+  background: #100c14;
+}
+
+.creator-built-in-preset strong {
+  color: #e8deee;
+  font-size: 11px;
+}
+
+.creator-built-in-preset span {
+  color: #81768a;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.creator-quick-presets {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid #2f2936;
+}
+
+.creator-quick-presets > span {
+  color: #786d82;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.creator-quick-presets > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.creator-quick-presets button {
+  min-height: 29px;
+  padding: 6px 9px;
+  border: 1px solid #342d3b;
+  border-radius: 7px;
+  background: #0b090e;
+  color: #aaa0b1;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.creator-quick-presets button:hover {
+  border-color: #574564;
+  color: #e4d9eb;
+}
+
+.creator-all-links-badge-editor {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 12px;
+  color: #aaa0b1;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.creator-all-links-badge-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px;
+  gap: 8px;
+  align-items: center;
+}
+
+.creator-all-links-badge-editor small {
+  color: #786f83;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.creator-all-links-badge-preview {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 38px;
+  border: 1px solid #553d87;
+  border-radius: 9px;
+  background: #281b48;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 950;
+  overflow: hidden;
+}
+
+@media (max-width: 680px) {
+  .overlay-size-controls,
+  .creator-built-in-presets {
+    grid-template-columns: 1fr;
+  }
+
+  .overlay-preview-actions {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+
+/* ==========================================================
+   LIVE PREVIEW ACTION ORDER - V21.1
+   ========================================================== */
+
+.panel-head > .overlay-preview-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.overlay-preview-actions .overlay-reset-everything {
+  order: 1;
+}
+
+.overlay-preview-actions .overlay-save-everything {
+  order: 2;
+}
+
+@media (max-width: 680px) {
+  .panel-head > .overlay-preview-actions {
+    flex-direction: row !important;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+
+/* ==========================================================
+   GLOBAL ACCOUNT BADGE - V22.3
+   ========================================================== */
+
+.account-badge-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 50px;
+  gap: 8px;
+  align-items: center;
+}
+
+.account-badge-preview {
+  display: grid;
+  place-items: center;
+
+  width: 50px;
+  height: 38px;
+
+  border: 1px solid #553d87;
+  border-radius: 9px;
+
+  background: #281b48;
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 950;
+
+  overflow: hidden;
+}

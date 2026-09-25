@@ -1,4 +1,7 @@
-export type PlanId = "free" | "pro" | "creator";
+export type PlanId =
+  | "free"
+  | "pro"
+  | "creator";
 
 export type PlanDefinition = {
   id: PlanId;
@@ -11,13 +14,17 @@ export type PlanDefinition = {
   features: string[];
 };
 
-export const PLANS: Record<PlanId, PlanDefinition> = {
+export const PLANS: Record<
+  PlanId,
+  PlanDefinition
+> = {
   free: {
     id: "free",
     name: "Free",
     price: 0,
     priceLabel: "$0",
-    description: "Everything needed to put a clean, typeable link on stream.",
+    description:
+      "Everything needed to put a clean, typeable link on stream.",
     linkLimit: 5,
     badge: "FREE",
     features: [
@@ -25,61 +32,76 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
       "One OBS browser source",
       "Generated NupHub short URLs",
       "Link rotation controls",
-      "Accent + text color",
-      "Background opacity + text size",
+      "Core readability controls",
       "Public streamer page",
     ],
   },
+
   pro: {
     id: "pro",
     name: "Pro Lifetime",
     price: 29,
     priceLabel: "$29",
-    description: "Unlock the full overlay builder and remove the practical limits.",
+    description:
+      "The full overlay builder with advanced appearance and motion controls.",
     linkLimit: null,
     badge: "PRO",
     features: [
       "Unlimited links",
-      "Full background color controls",
-      "Left / none / right edge accent",
-      "Left / center / right text alignment",
+      "Full overlay color and opacity controls",
       "Glass, solid and minimal styles",
-      "Shadow, glow and outline text effects",
-      "Font selection",
+      "Independent title and link text sizing",
+      "Font and alignment controls",
+      "Shadow, glow and outline effects",
       "Dual-color neon controls",
-      "Text motion and animated transitions",
-      "Lifetime access — no subscription",
+      "Text animations and transitions",
+      "Lifetime access with no subscription",
     ],
   },
+
   creator: {
     id: "creator",
     name: "Creator Lifetime",
     price: 69,
     priceLabel: "$69",
-    description: "The full NupHub toolkit plus every Creator feature we add.",
+    description:
+      "Everything in Pro plus NupHub's Creator-only workflow and presentation tools.",
     linkLimit: null,
     badge: "CREATOR",
     features: [
       "Everything in Pro",
-      "Creator feature access",
-      "Saved overlay presets",
-      "Per-link overlay chains",
+      "Saved Overlays",
+      "Creator Preset Library",
+      "CSS Text Effects Library",
       "Custom NupHub URLs",
-      "All Links OBS overlay",
+      "Custom Text",
+      "Per-link Link Chain controls",
+      "Per-link duration and weighted rotation",
       "Optional per-link QR codes",
-      "Advanced analytics",
-      "Overlay presets and scene packs",
-      "Scheduling and campaign tools",
-      "Twitch interactive tools as they ship",
-      "Lifetime access — no subscription",
+      "All Links OBS overlay",
+      "Editable All Links badge",
+      "Creator features added as they ship",
+      "Lifetime access with no subscription",
     ],
   },
 };
 
-export function planRank(plan: PlanId) {
-  return plan === "creator" ? 2 : plan === "pro" ? 1 : 0;
+export function planRank(
+  plan: PlanId,
+) {
+  return plan === "creator"
+    ? 2
+    : plan === "pro"
+      ? 1
+      : 0;
 }
 
-export function hasPlan(plan: PlanId, required: PlanId) {
-  return planRank(plan) >= planRank(required);
+export function hasPlan(
+  plan: PlanId,
+  required: PlanId,
+) {
+  return (
+    planRank(plan) >=
+    planRank(required)
+  );
 }

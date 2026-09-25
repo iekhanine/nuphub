@@ -16,15 +16,26 @@ import {
   MonitorUp,
   Settings2,
   ShieldCheck,
+  Sparkles,
   UserCircle2,
 } from "lucide-react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  useNavigate,
+} from "react-router-dom";
 
 import { Brand } from "./Brand";
 import { useAuth } from "../context/AuthContext";
-import { getMyAdminRole, getMyEntitlement } from "../lib/data";
+import {
+  getMyAdminRole,
+  getMyEntitlement,
+} from "../lib/data";
 import { PLANS } from "../lib/plans";
-import type { AdminRole, PlanId } from "../types";
+import type {
+  AdminRole,
+  PlanId,
+} from "../types";
 
 type Props = {
   handle?: string;
@@ -49,7 +60,14 @@ type NavItem = {
   icon: ReactNode;
 };
 
-const SIDEBAR_ORDER_KEY = "nuphub.dashboard.sidebar.order.v1";
+type NavGroup = {
+  id: string;
+  label: string;
+  items: NavItem[];
+};
+
+const SIDEBAR_ORDER_KEY =
+  "nuphub.dashboard.sidebar.order.v1";
 
 const defaultOrder: NavItemId[] = [
   "overview",
@@ -61,38 +79,72 @@ const defaultOrder: NavItemId[] = [
   "admin",
 ];
 
+const creatorUpgradeFeatures = [
+  "Saved Overlays + Preset Library",
+  "CSS Text Effects Library",
+  "Custom NupHub URLs",
+  "Per-link Link Chain controls",
+  "All Links OBS overlay",
+  "Custom Text + QR options",
+];
+
 function readSavedOrder(): NavItemId[] {
   try {
-    const raw = window.localStorage.getItem(SIDEBAR_ORDER_KEY);
+    const raw = window.localStorage.getItem(
+      SIDEBAR_ORDER_KEY,
+    );
+
     if (!raw) return defaultOrder;
 
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return defaultOrder;
 
-    const valid = parsed.filter((value): value is NavItemId =>
-      defaultOrder.includes(value as NavItemId),
+    if (!Array.isArray(parsed)) {
+      return defaultOrder;
+    }
+
+    const valid = parsed.filter(
+      (value): value is NavItemId =>
+        defaultOrder.includes(value as NavItemId),
     );
 
     return [
       ...valid,
-      ...defaultOrder.filter((id) => !valid.includes(id)),
+      ...defaultOrder.filter(
+        (id) => !valid.includes(id),
+      ),
     ];
   } catch {
     return defaultOrder;
   }
 }
 
-export function DashboardShell({ handle, children }: Props) {
+export function DashboardShell({
+  handle,
+  children,
+}: Props) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const [plan, setPlan] = useState<PlanId>("free");
-  const [adminRole, setAdminRole] = useState<AdminRole | null>(null);
-  const [navOrder, setNavOrder] = useState<NavItemId[]>(readSavedOrder);
-  const [draggingId, setDraggingId] = useState<NavItemId | null>(null);
-  const [dragOverId, setDragOverId] = useState<NavItemId | null>(null);
+
+  const [plan, setPlan] =
+    useState<PlanId>("free");
+
+  const [adminRole, setAdminRole] =
+    useState<AdminRole | null>(null);
+
+  const [navOrder, setNavOrder] =
+    useState<NavItemId[]>(readSavedOrder);
+
+  const [draggingId, setDraggingId] =
+    useState<NavItemId | null>(null);
+
+  const [dragOverId, setDragOverId] =
+    useState<NavItemId | null>(null);
 
   useEffect(() => {
-    Promise.all([getMyEntitlement(), getMyAdminRole()])
+    Promise.all([
+      getMyEntitlement(),
+      getMyAdminRole(),
+    ])
       .then(([entitlement, role]) => {
         setPlan(entitlement.plan);
         setAdminRole(role);
@@ -156,18 +208,67 @@ export function DashboardShell({ handle, children }: Props) {
   const orderedNavItems = useMemo(
     () =>
       navOrder
-        .map((id) => navItems.find((item) => item.id === id))
-        .filter((item): item is NavItem => Boolean(item))
-        .filter((item) => !item.adminOnly || Boolean(adminRole)),
-    [navItems, navOrder, adminRole],
+        .map((id) =>
+          navItems.find((item) => item.id === id),
+        )
+        .filter(
+          (item): item is NavItem => Boolean(item),
+        )
+        .filter(
+          (item) =>
+            !item.adminOnly || Boolean(adminRole),
+        )
+        .filter(
+          (item) =>
+            item.id !== "plan" || plan === "free",
+        ),
+    [
+      navItems,
+      navOrder,
+      adminRole,
+      plan,
+    ],
   );
+
+  const navGroups = useMemo<NavGroup[]>(() => {
+    const byIds = (ids: NavItemId[]) =>
+      orderedNavItems.filter((item) =>
+        ids.includes(item.id),
+      );
+
+    return [
+      {
+        id: "workspace",
+        label: "WORKSPACE",
+        items: byIds([
+          "overview",
+          "links",
+          "overlay",
+        ]),
+      },
+      {
+        id: "account",
+        label: "ACCOUNT",
+        items: byIds([
+          "plan",
+          "obs-how-to",
+          "account",
+          "admin",
+        ]),
+      },
+    ].filter(
+      (group) => group.items.length > 0,
+    );
+  }, [orderedNavItems]);
 
   async function logout() {
     await signOut();
     navigate("/");
   }
 
-  function persistOrder(next: NavItemId[]) {
+  function persistOrder(
+    next: NavItemId[],
+  ) {
     setNavOrder(next);
 
     try {
@@ -176,7 +277,7 @@ export function DashboardShell({ handle, children }: Props) {
         JSON.stringify(next),
       );
     } catch {
-      // Browser storage is optional. The menu still reorders this session.
+      // Browser storage is optional.
     }
   }
 
@@ -185,8 +286,12 @@ export function DashboardShell({ handle, children }: Props) {
     id: NavItemId,
   ) {
     setDraggingId(id);
+
     event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", id);
+    event.dataTransfer.setData(
+      "text/plain",
+      id,
+    );
   }
 
   function handleDragOver(
@@ -206,22 +311,77 @@ export function DashboardShell({ handle, children }: Props) {
 
     const sourceId =
       draggingId ||
-      (event.dataTransfer.getData("text/plain") as NavItemId);
+      (event.dataTransfer.getData(
+        "text/plain",
+      ) as NavItemId);
 
     setDraggingId(null);
     setDragOverId(null);
 
-    if (!sourceId || sourceId === targetId) return;
+    if (!sourceId || sourceId === targetId) {
+      return;
+    }
 
     const next = [...navOrder];
     const from = next.indexOf(sourceId);
     const to = next.indexOf(targetId);
 
-    if (from === -1 || to === -1) return;
+    if (from === -1 || to === -1) {
+      return;
+    }
 
     next.splice(from, 1);
     next.splice(to, 0, sourceId);
+
     persistOrder(next);
+  }
+
+  function renderNavItem(item: NavItem) {
+    return (
+      <div
+        className={`sidebar-draggable-item${
+          draggingId === item.id
+            ? " dragging"
+            : ""
+        }${
+          dragOverId === item.id
+            ? " drag-over"
+            : ""
+        }`}
+        draggable
+        onDragStart={(event) =>
+          handleDragStart(event, item.id)
+        }
+        onDragOver={(event) =>
+          handleDragOver(event, item.id)
+        }
+        onDrop={(event) =>
+          handleDrop(event, item.id)
+        }
+        onDragEnd={() => {
+          setDraggingId(null);
+          setDragOverId(null);
+        }}
+        key={item.id}
+      >
+        <span
+          className="sidebar-drag-handle"
+          title="Drag to reorder"
+          aria-hidden="true"
+        >
+          <GripVertical size={13} />
+        </span>
+
+        <NavLink
+          className="side-item sidebar-reorder-link"
+          end={item.end}
+          to={item.to}
+        >
+          {item.icon}
+          {item.label}
+        </NavLink>
+      </div>
+    );
   }
 
   return (
@@ -236,7 +396,8 @@ export function DashboardShell({ handle, children }: Props) {
             rel="noreferrer"
             className="topbar-public-link"
           >
-            nuphub.com/u/{handle} <ExternalLink size={13} />
+            nuphub.com/u/{handle}
+            <ExternalLink size={13} />
           </a>
         )}
       </div>
@@ -245,72 +406,94 @@ export function DashboardShell({ handle, children }: Props) {
         <aside className="dash-sidebar">
           <div className="dash-profile">
             <div className="avatar">
-              {(handle?.slice(0, 2) || "NU").toUpperCase()}
+              {(handle?.slice(0, 2) || "NU")
+                .toUpperCase()}
             </div>
+
             <div>
-              <strong>{handle ?? "streamer"}</strong>
+              <strong>
+                {handle ?? "streamer"}
+              </strong>
               <span>{PLANS[plan].name}</span>
             </div>
           </div>
 
-          <div className="sidebar-nav-list">
-            {orderedNavItems.map((item) => (
-              <div
-                className={`sidebar-draggable-item${
-                  draggingId === item.id ? " dragging" : ""
-                }${
-                  dragOverId === item.id ? " drag-over" : ""
-                }`}
-                draggable
-                onDragStart={(event) =>
-                  handleDragStart(event, item.id)
-                }
-                onDragOver={(event) =>
-                  handleDragOver(event, item.id)
-                }
-                onDrop={(event) =>
-                  handleDrop(event, item.id)
-                }
-                onDragEnd={() => {
-                  setDraggingId(null);
-                  setDragOverId(null);
-                }}
-                key={item.id}
+          <nav
+            className="sidebar-nav-sections"
+            aria-label="Dashboard"
+          >
+            {navGroups.map((group) => (
+              <section
+                className={`sidebar-nav-section sidebar-nav-${group.id}`}
+                key={group.id}
               >
-                <span
-                  className="sidebar-drag-handle"
-                  title="Drag to reorder"
-                  aria-hidden="true"
-                >
-                  <GripVertical size={13} />
+                <span className="sidebar-nav-label">
+                  {group.label}
                 </span>
 
-                <NavLink
-                  className="side-item sidebar-reorder-link"
-                  end={item.end}
-                  to={item.to}
-                >
-                  {item.icon}
-                  {item.label}
-                </NavLink>
-              </div>
+                <div className="sidebar-nav-list">
+                  {group.items.map(
+                    renderNavItem,
+                  )}
+                </div>
+              </section>
             ))}
-          </div>
+          </nav>
 
           <div className="sidebar-spacer" />
 
-          <Link className="side-item" to="/">
-            <Settings2 size={17} />
-            NupHub home
-          </Link>
+          {plan === "pro" && (
+            <div className="sidebar-upgrade-wrap">
+              <Link
+                className="sidebar-creator-upgrade"
+                to="/dashboard/billing"
+              >
+                <Sparkles size={15} />
+                <span>
+                  Upgrade to Creator
+                </span>
+              </Link>
 
-          <button className="side-item" onClick={logout}>
-            <LogOut size={17} />
-            Sign out
-          </button>
+              <div
+                className="sidebar-upgrade-popover"
+                role="tooltip"
+              >
+                <strong>
+                  Creator adds
+                </strong>
+
+                <ul>
+                  {creatorUpgradeFeatures.map(
+                    (feature) => (
+                      <li key={feature}>
+                        {feature}
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          <div className="sidebar-footer-links">
+            <Link className="side-item" to="/">
+              <Settings2 size={17} />
+              NupHub home
+            </Link>
+
+            <button
+              className="side-item"
+              onClick={logout}
+            >
+              <LogOut size={17} />
+              Sign out
+            </button>
+          </div>
         </aside>
 
-        <section className="dash-main">{children}</section>
+        <section className="dash-main">
+          {children}
+        </section>
       </div>
     </main>
   );

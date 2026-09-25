@@ -116,6 +116,9 @@ export type OverlaySettings = {
   neon_intensity: number;
   neon_speed: number;
   font_scale: number;
+  label_font_scale: number;
+  url_font_scale: number;
+  all_links_badge_text: string | null;
   show_label: boolean;
   show_url: boolean;
   custom_label_text: string | null;
@@ -144,6 +147,8 @@ export type OverlayPresetConfig = Pick<
   | "neon_intensity"
   | "neon_speed"
   | "font_scale"
+  | "label_font_scale"
+  | "url_font_scale"
   | "show_label"
   | "show_url"
 >;
@@ -180,6 +185,7 @@ export type PublicOverlayLink = {
 export type PublicStreamer = {
   handle: string;
   display_name: string | null;
+  badge_text: string | null;
   settings: {
     rotation_seconds: number;
     position: OverlayPosition;
@@ -202,6 +208,8 @@ export type PublicStreamer = {
     neon_intensity: number;
     neon_speed: number;
     font_scale: number;
+    label_font_scale: number;
+    url_font_scale: number;
     show_label: boolean;
     show_url: boolean;
     custom_label_text: string | null;
@@ -233,6 +241,7 @@ export type PublicAllLinksOverlay = {
   accent_color: string;
   background_color: string;
   text_color: string;
+  badge_text: string | null;
   links: Array<{
     label: string;
     slug: string;

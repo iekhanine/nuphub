@@ -5,6 +5,7 @@ import {
   MonitorUp,
   Palette,
   Save,
+  RotateCcw,
   Trash2,
   Type,
 } from "lucide-react";
@@ -110,6 +111,147 @@ const creatorTextEffectIds = new Set<OverlayTextEffect>(
   creatorCssTextEffects.map((effect) => effect.id),
 );
 
+type BuiltInCreatorPreset = {
+  id: string;
+  name: string;
+  description: string;
+  config: Partial<OverlayPresetConfig>;
+};
+
+const builtInCreatorPresets: BuiltInCreatorPreset[] = [
+  {
+    id: "clean-glass",
+    name: "Clean Glass",
+    description: "Polished purple glass with balanced typography.",
+    config: {
+      style: "glass",
+      background_color: "#0a080e",
+      glass_left_color: "#21142f",
+      glass_right_color: "#4b2375",
+      accent_color: "#8b5cf6",
+      text_color: "#ffffff",
+      background_opacity: 0.92,
+      accent_bar_side: "left",
+      text_align: "left",
+      font_family: "inter",
+      text_effect: "none",
+      text_animation: "none",
+      transition_effect: "fade",
+      label_font_scale: 1,
+      url_font_scale: 1,
+    },
+  },
+  {
+    id: "glitch-bounce",
+    name: "Glitch Bounce",
+    description: "RGB glitch with a restrained bounce and hard dark card.",
+    config: {
+      style: "solid",
+      background_color: "#08080c",
+      accent_color: "#ff4fd8",
+      text_color: "#ffffff",
+      background_opacity: 0.96,
+      accent_bar_side: "left",
+      text_align: "left",
+      font_family: "courier",
+      text_effect: "glitch",
+      text_animation: "bounce",
+      transition_effect: "pop",
+      animation_speed: 1.35,
+      label_font_scale: 0.95,
+      url_font_scale: 0.9,
+    },
+  },
+  {
+    id: "vapor-float",
+    name: "Vapor Float",
+    description: "Purple/cyan glass with Vapor and a slow floating motion.",
+    config: {
+      style: "glass",
+      background_color: "#0a0812",
+      glass_left_color: "#351754",
+      glass_right_color: "#0f5060",
+      accent_color: "#c084fc",
+      text_color: "#f5eaff",
+      background_opacity: 0.88,
+      accent_bar_side: "none",
+      text_align: "center",
+      font_family: "courier",
+      text_effect: "vapor",
+      text_animation: "float",
+      transition_effect: "fade",
+      animation_speed: 2.1,
+      label_font_scale: 0.9,
+      url_font_scale: 0.88,
+    },
+  },
+  {
+    id: "scanner-pulse",
+    name: "Scanner Pulse",
+    description: "Dark solid card with the scanner effect and soft pulse.",
+    config: {
+      style: "solid",
+      background_color: "#090a0d",
+      accent_color: "#ff4fd8",
+      text_color: "#f9f7fb",
+      background_opacity: 0.98,
+      accent_bar_side: "right",
+      text_align: "left",
+      font_family: "courier",
+      text_effect: "scanner",
+      text_animation: "pulse",
+      transition_effect: "slide-left",
+      animation_speed: 1.8,
+      label_font_scale: 0.9,
+      url_font_scale: 0.86,
+    },
+  },
+  {
+    id: "spotlight-wobble",
+    name: "Spotlight Wobble",
+    description: "Low-key glass with a moving spotlight and subtle wobble.",
+    config: {
+      style: "glass",
+      background_color: "#08080b",
+      glass_left_color: "#101016",
+      glass_right_color: "#271b32",
+      accent_color: "#f0abfc",
+      text_color: "#ffffff",
+      background_opacity: 0.9,
+      accent_bar_side: "none",
+      text_align: "center",
+      font_family: "courier",
+      text_effect: "spotlight",
+      text_animation: "wobble",
+      transition_effect: "fade",
+      animation_speed: 2.2,
+      label_font_scale: 0.95,
+      url_font_scale: 0.9,
+    },
+  },
+  {
+    id: "negative-pop",
+    name: "Negative Pop",
+    description: "Minimal high-contrast negative sweep with Pop transition.",
+    config: {
+      style: "minimal",
+      background_color: "#000000",
+      accent_color: "#ffffff",
+      text_color: "#ffffff",
+      background_opacity: 0,
+      accent_bar_side: "none",
+      text_align: "center",
+      font_family: "courier",
+      text_effect: "negative",
+      text_animation: "none",
+      transition_effect: "pop",
+      animation_speed: 1.6,
+      label_font_scale: 1,
+      url_font_scale: 1,
+    },
+  },
+];
+
 const creatorAnimations: Array<{
   id: OverlayTextAnimation;
   label: string;
@@ -162,6 +304,8 @@ function presetConfig(settings: OverlaySettings): OverlayPresetConfig {
     neon_intensity: settings.neon_intensity,
     neon_speed: settings.neon_speed,
     font_scale: settings.font_scale,
+    label_font_scale: settings.label_font_scale,
+    url_font_scale: settings.url_font_scale,
     show_label: settings.show_label,
     show_url: settings.show_url,
   };
@@ -191,6 +335,16 @@ function normalizeSettings(settings: OverlaySettings): OverlaySettings {
     neon_intensity: settings.neon_intensity ?? 1,
     neon_speed: settings.neon_speed ?? 1.8,
     font_scale: settings.font_scale ?? 1,
+    label_font_scale:
+      settings.label_font_scale ??
+      settings.font_scale ??
+      1,
+    url_font_scale:
+      settings.url_font_scale ??
+      settings.font_scale ??
+      1,
+    all_links_badge_text:
+      settings.all_links_badge_text ?? null,
     font_family: settings.font_family ?? "inter",
     text_align: settings.text_align ?? "left",
     custom_label_text: settings.custom_label_text ?? null,
@@ -288,6 +442,8 @@ export default function OverlaySettingsPage() {
     return {
       handle: profile.handle,
       display_name: profile.display_name,
+      badge_text:
+        settings.all_links_badge_text?.trim() || null,
       settings: {
         rotation_seconds: settings.rotation_seconds,
         position: settings.position,
@@ -320,6 +476,14 @@ export default function OverlaySettingsPage() {
         neon_intensity: settings.neon_intensity ?? 1,
         neon_speed: settings.neon_speed ?? 1.8,
         font_scale: settings.font_scale ?? 1,
+        label_font_scale:
+          settings.label_font_scale ??
+          settings.font_scale ??
+          1,
+        url_font_scale:
+          settings.url_font_scale ??
+          settings.font_scale ??
+          1,
         show_label: settings.show_label,
         show_url: settings.show_url,
         custom_label_text: settings.custom_label_text ?? null,
@@ -377,6 +541,8 @@ export default function OverlaySettingsPage() {
       "accent_bar_side",
       "text_align",
       "font_family",
+      "label_font_scale",
+      "url_font_scale",
       "text_effect",
       "text_animation",
       "transition_effect",
@@ -408,12 +574,18 @@ export default function OverlaySettingsPage() {
       creatorTextEffectIds.has(settings.text_effect) &&
       settings.text_effect !== savedSettings.text_effect;
 
+    const changedAllLinksBadge =
+      !!savedSettings &&
+      (settings.all_links_badge_text ?? "") !==
+        (savedSettings.all_links_badge_text ?? "");
+
     const changedCreatorFeature =
       !creator &&
       (
         linkChainChanged() ||
         changedCreatorText ||
-        changedCreatorEffect
+        changedCreatorEffect ||
+        changedAllLinksBadge
       );
 
     // Keep the save atomic. Do not partially save allowed settings
@@ -438,7 +610,11 @@ export default function OverlaySettingsPage() {
         accent_color: settings.accent_color,
         text_color: settings.text_color,
         background_opacity: settings.background_opacity,
-        font_scale: settings.font_scale,
+        font_scale: 1,
+        label_font_scale: settings.label_font_scale,
+        url_font_scale: settings.url_font_scale,
+        all_links_badge_text:
+          settings.all_links_badge_text?.trim() || null,
         show_label: settings.show_label,
         show_url: settings.show_url,
 
@@ -546,6 +722,83 @@ export default function OverlaySettingsPage() {
   }
 
 
+  function applyBuiltInPreset(preset: BuiltInCreatorPreset) {
+    if (!settings) return;
+
+    if (!creator) {
+      setUpgradePrompt("creator");
+      return;
+    }
+
+    setSettings(
+      normalizeSettings({
+        ...settings,
+        ...preset.config,
+      }),
+    );
+
+    setMessage(`Loaded "${preset.name}". Save Everything to keep it.`);
+    window.setTimeout(() => setMessage(""), 2200);
+  }
+
+  function resetEverything() {
+    if (!settings) return;
+
+    setSettings(
+      normalizeSettings({
+        ...settings,
+        rotation_seconds: 8,
+        position: "bottom-left",
+        accent_color: "#8b5cf6",
+        background_color: "#0a080e",
+        glass_left_color: "#17101f",
+        glass_right_color: "#3b1768",
+        text_color: "#ffffff",
+        style: "glass",
+        background_opacity: 0.94,
+        accent_bar_side: "left",
+        text_align: "left",
+        font_family: "inter",
+        text_effect: "none",
+        text_animation: "none",
+        transition_effect: "fade",
+        animation_speed: 1.6,
+        neon_primary_color: "#8b5cf6",
+        neon_secondary_color: "#22d3ee",
+        neon_intensity: 1,
+        neon_speed: 1.8,
+        font_scale: 1,
+        label_font_scale: 1,
+        url_font_scale: 1,
+        show_label: true,
+        show_url: true,
+        custom_label_text: null,
+        custom_url_text: null,
+        all_links_badge_text: null,
+      }),
+    );
+
+    setSequence(
+      links
+        .filter((item) => item.enabled)
+        .map((link) => ({
+          ...chainItem(link.id),
+          preset_id: null,
+          duration_seconds: null,
+          weight: 1,
+          qr_enabled: false,
+        })),
+    );
+
+    setPresetName("");
+    setPreviewBackdrop("checker");
+    setPreviewCustomColor("#6f4aa8");
+    setRenderScale(2);
+    setMessage("Reset loaded. Save Everything to make it permanent.");
+    window.setTimeout(() => setMessage(""), 2600);
+  }
+
+
   function chainItem(linkId: string): OverlaySequenceItem {
     return (
       sequence.find((item) => item.link_id === linkId) ?? {
@@ -617,7 +870,6 @@ export default function OverlaySettingsPage() {
   const opacityPercent = Math.round(
     (settings.background_opacity ?? 0.94) * 100,
   );
-  const fontPercent = Math.round((settings.font_scale ?? 1) * 100);
 
   // UI direction: left = slow, right = fast.
   // Stored value remains CSS duration (higher = slower) for compatibility.
@@ -887,25 +1139,61 @@ export default function OverlaySettingsPage() {
                 </div>
               </label>
 
-              <label>
-                Text size
-                <div className="range-row">
-                  <input
-                    type="range"
-                    min="80"
-                    max="125"
-                    step="5"
-                    value={fontPercent}
-                    onChange={(event) =>
-                      setSettings({
-                        ...settings,
-                        font_scale: Number(event.target.value) / 100,
-                      })
-                    }
-                  />
-                  <strong>{fontPercent}%</strong>
-                </div>
-              </label>
+              <div className="overlay-size-controls">
+                <label>
+                  Title size
+                  <div className="range-row">
+                    <input
+                      type="range"
+                      min="60"
+                      max="160"
+                      step="5"
+                      value={Math.round(
+                        (settings.label_font_scale ?? 1) * 100,
+                      )}
+                      onChange={(event) =>
+                        setSettings({
+                          ...settings,
+                          label_font_scale:
+                            Number(event.target.value) / 100,
+                        })
+                      }
+                    />
+                    <strong>
+                      {Math.round(
+                        (settings.label_font_scale ?? 1) * 100,
+                      )}%
+                    </strong>
+                  </div>
+                </label>
+
+                <label>
+                  Link text size
+                  <div className="range-row">
+                    <input
+                      type="range"
+                      min="60"
+                      max="160"
+                      step="5"
+                      value={Math.round(
+                        (settings.url_font_scale ?? 1) * 100,
+                      )}
+                      onChange={(event) =>
+                        setSettings({
+                          ...settings,
+                          url_font_scale:
+                            Number(event.target.value) / 100,
+                        })
+                      }
+                    />
+                    <strong>
+                      {Math.round(
+                        (settings.url_font_scale ?? 1) * 100,
+                      )}%
+                    </strong>
+                  </div>
+                </label>
+              </div>
             
               </div>
             </div>
@@ -1449,7 +1737,6 @@ export default function OverlaySettingsPage() {
                           settings.text_effect === effect.id
                             ? "none"
                             : effect.id,
-                        text_animation: "none",
                       })
                     }
                     key={effect.id}
@@ -1468,6 +1755,57 @@ export default function OverlaySettingsPage() {
               {!creator && (
                 <div className="paid-preview-note creator">
                   Preview these effects now. Upgrade to Creator to save and use them.
+                </div>
+              )}
+            </div>
+          </details>
+
+          <details className="panel settings-panel overlay-accordion creator-settings-accordion">
+            <summary className="overlay-accordion-summary">
+              <div>
+                <span className="overlay-tier-badge creator">CREATOR</span>
+                <strong>Preset Library</strong>
+              </div>
+              <span className="overlay-accordion-hint">
+                {creator ? "Load" : "Preview"}
+              </span>
+            </summary>
+
+            <div className="overlay-accordion-body creator-preset-library-body">
+              <div className="creator-built-in-presets">
+                {builtInCreatorPresets.map((preset) => (
+                  <button
+                    type="button"
+                    className="creator-built-in-preset"
+                    onClick={() => applyBuiltInPreset(preset)}
+                    key={preset.id}
+                  >
+                    <strong>{preset.name}</strong>
+                    <span>{preset.description}</span>
+                  </button>
+                ))}
+              </div>
+
+              {presets.length > 0 && (
+                <div className="creator-quick-presets">
+                  <span>YOUR SAVED PRESETS</span>
+                  <div>
+                    {presets.map((preset) => (
+                      <button
+                        type="button"
+                        onClick={() => applyPreset(preset)}
+                        key={preset.id}
+                      >
+                        {preset.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {!creator && (
+                <div className="paid-preview-note creator">
+                  Creator unlocks the preset library and saved-preset loading.
                 </div>
               )}
             </div>
@@ -1845,13 +2183,25 @@ export default function OverlaySettingsPage() {
               <span className="panel-label">LIVE PREVIEW</span>
               <strong>What viewers see</strong>
             </div>
-            <button
-              className="button primary overlay-save-everything"
-              onClick={() => void save()}
-            >
-              <Save size={17} />
-              {saving ? "Saving…" : "Save Everything"}
-            </button>
+            <div className="overlay-preview-actions">
+              <button
+                type="button"
+                className="button overlay-reset-everything"
+                onClick={resetEverything}
+                disabled={saving}
+              >
+                <RotateCcw size={16} />
+                Reset Everything
+              </button>
+
+              <button
+                className="button primary overlay-save-everything"
+                onClick={() => void save()}
+              >
+                <Save size={17} />
+                {saving ? "Saving…" : "Save Everything"}
+              </button>
+            </div>
           </div>
 
           <div className="preview-backdrop-tabs">

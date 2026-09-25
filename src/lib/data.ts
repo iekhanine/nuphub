@@ -209,6 +209,9 @@ export async function saveOverlaySettings(
       | "neon_intensity"
       | "neon_speed"
       | "font_scale"
+      | "label_font_scale"
+      | "url_font_scale"
+      | "all_links_badge_text"
       | "show_label"
       | "show_url"
     >

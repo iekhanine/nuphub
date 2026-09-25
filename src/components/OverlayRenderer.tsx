@@ -273,7 +273,19 @@ export function OverlayRenderer({
   const textEffect = settings.text_effect ?? "none";
   const textAnimation = settings.text_animation ?? "none";
   const transitionEffect = settings.transition_effect ?? "fade";
-  const fontScale = clamp(settings.font_scale, 0.8, 1.25, 1);
+  const legacyFontScale = clamp(settings.font_scale, 0.8, 1.25, 1);
+  const labelFontScale = clamp(
+    settings.label_font_scale,
+    0.6,
+    1.6,
+    legacyFontScale,
+  );
+  const urlFontScale = clamp(
+    settings.url_font_scale,
+    0.6,
+    1.6,
+    legacyFontScale,
+  );
   const animationDuration = clamp(settings.animation_speed, 0.4, 4, 1.6);
   const neonDuration = clamp(settings.neon_speed, 0.35, 4, 1.8);
   const neonIntensity = clamp(settings.neon_intensity, 0.25, 2.5, 1);
@@ -305,8 +317,8 @@ export function OverlayRenderer({
   const labelY = settings.show_url ? (qrEnabled ? 38 : 40) : 60;
   const urlY = settings.show_label ? (qrEnabled ? 66 : 70) : 62;
 
-  const labelFontSize = (qrEnabled ? 10 : 12) * fontScale;
-  const urlFontSize = (qrEnabled ? 18 : 25) * fontScale;
+  const labelFontSize = (qrEnabled ? 10 : 12) * labelFontScale;
+  const urlFontSize = (qrEnabled ? 18 : 25) * urlFontScale;
   const labelLetterSpacing = qrEnabled ? 1 : 1;
   const urlLetterSpacing = qrEnabled ? 0 : 0;
 
@@ -345,8 +357,26 @@ export function OverlayRenderer({
 
   const resolvedMotionClass = motionClass;
 
-  const creatorTextStyle = {
+  const creatorTitleTextStyle = {
     color: textColor,
+    transform: `scale(${labelFontScale})`,
+    transformOrigin:
+      textAlign === "center"
+        ? "center center"
+        : textAlign === "right"
+          ? "right center"
+          : "left center",
+  } as CSSProperties;
+
+  const creatorUrlTextStyle = {
+    color: textColor,
+    transform: `scale(${urlFontScale})`,
+    transformOrigin:
+      textAlign === "center"
+        ? "center center"
+        : textAlign === "right"
+          ? "right center"
+          : "left center",
   } as CSSProperties;
 
   const creatorLineClass =
@@ -523,7 +553,7 @@ export function OverlayRenderer({
                       <CreatorTextEffect
                         effect={creatorCssEffect}
                         text={label.toUpperCase()}
-                        style={creatorTextStyle}
+                        style={creatorTitleTextStyle}
                       />
                     </div>
                   </foreignObject>
@@ -543,7 +573,7 @@ export function OverlayRenderer({
                       <CreatorTextEffect
                         effect={creatorCssEffect}
                         text={url}
-                        style={creatorTextStyle}
+                        style={creatorUrlTextStyle}
                       />
                     </div>
                   </foreignObject>
